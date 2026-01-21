@@ -1,0 +1,606 @@
+"use client";
+
+import { useState } from "react";
+import DotGridBackground from "@/components/frontend/DotGridBackground";
+import Button from "@/components/ui/Button";
+import Carousel from "@/components/frontend/Carousel";
+import { Property } from "@/types";
+
+// Label çevirileri
+const labels: Record<string, Record<string, string>> = {
+  type: {
+    RESIDENTIAL: "Konut",
+    COMMERCIAL: "Ticari",
+    LAND: "Arsa",
+  },
+  propertyType: {
+    FOR_SALE: "Satılık",
+    FOR_RENT: "Kiralık",
+    TRANSFER_SALE: "Devren Satılık",
+    TRANSFER_RENT: "Devren Kiralık",
+    FOR_FLOOR_EQUIVALENT: "Kat Karşılığı",
+  },
+  housingType: {
+    DUPLEX: "Dubleks",
+    TOP_FLOOR: "Çatı Katı",
+    MIDDLE_FLOOR: "Ara Kat",
+    MIDDLE_FLOOR_DUPLEX: "Ara Kat Dubleks",
+    GARDEN_DUPLEX: "Bahçe Katı Dubleks",
+    ROOF_DUPLEX: "Çatı Dubleks",
+    FOURPLEX: "Fourlex",
+    REVERSE_DUPLEX: "Ters Dubleks",
+    TRIPLEX: "Tripleks",
+  },
+  buildingAge: {
+    "0_READY": "0 (Sıfır - Kullanıma Hazır)",
+    "0_CONSTRUCTION": "0 (Sıfır - İnşaat Halinde)",
+    "1": "1 Yaşında",
+    "2": "2 Yaşında",
+    "3": "3 Yaşında",
+    "4": "4 Yaşında",
+    "5": "5 Yaşında",
+    "6_10": "6-10 Arası",
+    "11_15": "11-15 Arası",
+    "16_20": "16-20 Arası",
+    "21_25": "21-25 Arası",
+    "26_30": "26-30 Arası",
+    "31_PLUS": "31 ve Üzeri",
+  },
+  heating: {
+    NONE: "Yok",
+    STOVE: "Soba",
+    NATURAL_GAS_STOVE: "Doğalgaz Sobası",
+    FLOOR_HEATING_SYSTEM: "Yerden Isıtma Sistemi",
+    CENTRAL: "Merkezi",
+    CENTRAL_METER: "Merkezi (Pay Ölçer)",
+    COMBI_NATURAL_GAS: "Kombi (Doğalgaz)",
+    COMBI_ELECTRIC: "Kombi (Elektrik)",
+    UNDERFLOOR_HEATING: "Yerden Isıtma",
+    AIR_CONDITIONING: "Klima",
+    FANCOIL: "Fancoil Ünitesi",
+    SOLAR_ENERGY: "Güneş Enerjisi",
+    ELECTRIC_RADIATOR: "Elektrikli Radyatör",
+    GEOTHERMAL: "Jeotermal",
+    FIREPLACE: "Şömine",
+    VRV: "VRV",
+    HEAT_PUMP: "Isı Pompası",
+  },
+  kitchen: {
+    OPEN_AMERICAN: "Açık (Amerikan)",
+    CLOSED: "Kapalı",
+  },
+  parking: {
+    OPEN: "Açık Otopark",
+    CLOSED: "Kapalı Otopark",
+    OPEN_AND_CLOSED: "Açık ve Kapalı Otopark",
+    NONE: "Yok",
+  },
+  usageStatus: {
+    EMPTY: "Boş",
+    TENANT: "Kiracılı",
+    OWNER: "Mal Sahibi",
+  },
+  deedStatus: {
+    CONDOMINIUM: "Kat Mülkiyetli",
+    EASEMENT: "Kat İrtifaklı",
+    SHARED_DEED: "Hisseli Tapu",
+    DETACHED_DEED: "Müstakil Tapu",
+    LAND_DEED: "Arsa Tapulu",
+    COOPERATIVE_DEED: "Kooperatif Hisseli",
+    USUFRUCT: "İntifa Hakkı",
+    FOREIGN_DEED: "Yabancı Tapu",
+    NO_DEED: "Tapu Yok",
+  },
+  listedBy: {
+    OWNER: "Mal Sahibinden",
+    AGENCY: "Emlak Ofisinden",
+    CONSTRUCTION_COMPANY: "İnşaat Firmasından",
+    BANK: "Bankadan",
+  },
+  commercialType: {
+    SHOP: "Dükkan",
+    GAS_STATION: "Akaryakıt İstasyonu",
+    WORKSHOP: "Atölye",
+    MALL: "AVM",
+    KIOSK: "Büfe",
+    OFFICE: "Büro / Ofis",
+    FARM: "Çiftlik",
+    WAREHOUSE: "Depo",
+    WEDDING_HALL: "Düğün Salonu",
+    POWER_PLANT: "Enerji Santrali",
+    FACTORY: "Fabrika",
+    GARAGE: "Garaj",
+    MANUFACTURING: "İmalathane",
+    BUSINESS_CENTER_FLOOR: "İş Hanı Katı",
+    CAFE_BAR: "Kafe / Bar",
+    CANTEEN: "Kantin",
+    BREAKFAST_GARDEN: "Kahvaltı Bahçesi",
+    TEA_HOUSE: "Kıraathane",
+    FULL_BUILDING: "Komple Bina",
+    PARKING: "Otopark",
+    CAR_WASH_SALON: "Oto Yıkama Salonu",
+    BAKERY: "Pastane / Fırın",
+    MARKET_PLACE: "Pazar Yeri",
+    PLAZA: "Plaza",
+    PLAZA_FLOOR: "Plaza Katı",
+    RESTAURANT: "Restoran / Lokanta",
+    RESIDENCE_FLOOR: "Rezidans Katı",
+    HEALTH_CENTER: "Sağlık Merkezi",
+    CINEMA_HALL: "Sinema Salonu",
+    SPA: "SPA / Wellness",
+    SPORTS_FACILITY: "Spor Tesisi",
+    VILLA: "Villa",
+    DORMITORY: "Yurt",
+  },
+  zoningStatus: {
+    ISLAND: "Ada",
+    A_LEGEND: "A Lejantı",
+    LAND: "Arazi",
+    VINEYARD_GARDEN: "Bağ / Bahçe",
+    WAREHOUSE: "Depo / Antrepo",
+    EDUCATION: "Eğitim",
+    RESIDENTIAL: "Konut",
+    CULTURAL_FACILITY: "Kültürel Tesis",
+    MISCELLANEOUS: "Muhtelif",
+    SPECIAL_USE: "Özel Kullanım",
+    HEALTH: "Sağlık",
+    INDUSTRIAL: "Sanayi",
+    CONSERVATION_AREA: "Sit Alanı",
+    FIELD: "Tarla",
+    FIELD_VINEYARD: "Tarla / Bağ",
+    COMMERCIAL: "Ticaret",
+    COMMERCIAL_RESIDENTIAL: "Ticaret + Konut",
+    MASS_HOUSING: "Toplu Konut",
+    TOURISM: "Turizm",
+    TOURISM_RESIDENTIAL: "Turizm + Konut",
+    TOURISM_COMMERCIAL: "Turizm + Ticaret",
+    VILLA: "Villa",
+    OLIVE_GROVE: "Zeytinlik",
+  },
+  yesNo: {
+    YES: "Evet",
+    NO: "Hayır",
+  },
+};
+
+const getLabel = (category: string, value: string | null | undefined): string | null => {
+  if (!value) return null;
+  return labels[category]?.[value] || value;
+};
+
+interface PropertyDetailClientProps {
+  initialProperty: Property | null;
+}
+
+export default function PropertyDetailClient({ initialProperty }: PropertyDetailClientProps) {
+  const [property] = useState<Property | null>(initialProperty);
+
+  // Fiyat formatlama fonksiyonu
+  const formatPrice = (price: number | null | undefined): string | null => {
+    if (!price) return null;
+    return new Intl.NumberFormat('tr-TR').format(price) + ' TL';
+  };
+
+  // Alan formatlama fonksiyonu
+  const formatArea = (area: number | null | undefined): string | null => {
+    if (!area) return null;
+    return new Intl.NumberFormat('tr-TR').format(area) + ' m²';
+  };
+
+  if (!property) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="text-center">
+          <h2 className="mb-4 text-2xl font-bold text-gray-800">Gayrimenkul Bulunamadı</h2>
+          <Button rounded={true} variant="link" href="/properties">
+            Tüm Gayrimenkullere Dön
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Harita koordinatları var mı?
+  const hasLocation = property.latitude && property.longitude;
+
+  // Detay bilgilerini al (residential, commercial veya land)
+  const residentialDetails = property.residentialDetails;
+  const commercialDetails = property.commercialDetails;
+  const landDetails = property.landDetails;
+
+  // Tip belirle
+  const isResidential = property.type === 'RESIDENTIAL';
+  const isCommercial = property.type === 'COMMERCIAL';
+  const isLand = property.type === 'LAND';
+
+  // Özellik listesi oluştur
+  const specs: { label: string; value: string | null }[] = [];
+
+  // Kategori
+  const typeLabel = getLabel('type', property.type);
+  if (typeLabel) {
+    specs.push({ label: 'Kategori', value: typeLabel });
+  }
+
+  if (isResidential && residentialDetails) {
+    const rd = residentialDetails;
+
+    // Emlak Tipi
+    const propertyType = getLabel('propertyType', rd.propertyType);
+    if (propertyType) {
+      specs.push({ label: 'Emlak Tipi', value: propertyType });
+    }
+
+    // Fiyat
+    const price = formatPrice(rd.price);
+    if (price) {
+      specs.push({ label: 'Fiyat', value: price });
+    }
+
+    // m² (Brüt)
+    const grossArea = formatArea(rd.grossArea);
+    if (grossArea) {
+      specs.push({ label: 'm² (Brüt)', value: grossArea });
+    }
+
+    // m² (Net)
+    const netArea = formatArea(rd.netArea);
+    if (netArea) {
+      specs.push({ label: 'm² (Net)', value: netArea });
+    }
+
+    // Oda Sayısı
+    if (rd.roomCount) {
+      specs.push({ label: 'Oda Sayısı', value: rd.roomCount });
+    }
+
+    // Konut Tipi
+    const housingType = getLabel('housingType', rd.housingType);
+    if (housingType) {
+      specs.push({ label: 'Konut Tipi', value: housingType });
+    }
+
+    // Bina Yaşı
+    const buildingAge = getLabel('buildingAge', rd.buildingAge);
+    if (buildingAge) {
+      specs.push({ label: 'Bina Yaşı', value: buildingAge });
+    }
+
+    // Bulunduğu Kat
+    if (rd.currentFloor) {
+      specs.push({ label: 'Bulunduğu Kat', value: rd.currentFloor });
+    }
+
+    // Kat Sayısı
+    if (rd.totalFloors) {
+      specs.push({ label: 'Kat Sayısı', value: rd.totalFloors });
+    }
+
+    // Isıtma
+    const heating = getLabel('heating', rd.heating);
+    if (heating) {
+      specs.push({ label: 'Isıtma', value: heating });
+    }
+
+    // Banyo Sayısı
+    if (rd.bathroomCount && rd.bathroomCount !== 'NONE') {
+      specs.push({ label: 'Banyo Sayısı', value: rd.bathroomCount });
+    }
+
+    // Mutfak
+    const kitchen = getLabel('kitchen', rd.kitchen);
+    if (kitchen) {
+      specs.push({ label: 'Mutfak', value: kitchen });
+    }
+
+    // Balkon
+    const balcony = getLabel('yesNo', rd.balcony);
+    if (balcony) {
+      specs.push({ label: 'Balkon', value: balcony });
+    }
+
+    // Asansör
+    const elevator = getLabel('yesNo', rd.elevator);
+    if (elevator) {
+      specs.push({ label: 'Asansör', value: elevator });
+    }
+
+    // Otopark
+    const parking = getLabel('parking', rd.parking);
+    if (parking) {
+      specs.push({ label: 'Otopark', value: parking });
+    }
+
+    // Eşyalı
+    const furnished = getLabel('yesNo', rd.furnished);
+    if (furnished) {
+      specs.push({ label: 'Eşyalı', value: furnished });
+    }
+
+    // Kullanım Durumu
+    const usageStatus = getLabel('usageStatus', rd.usageStatus);
+    if (usageStatus) {
+      specs.push({ label: 'Kullanım Durumu', value: usageStatus });
+    }
+
+    // Site İçerisinde
+    const inComplex = getLabel('yesNo', rd.inComplex);
+    if (inComplex) {
+      specs.push({ label: 'Site İçerisinde', value: inComplex });
+    }
+
+    // Krediye Uygunluk
+    const mortgageEligible = getLabel('yesNo', rd.mortgageEligible);
+    if (mortgageEligible) {
+      specs.push({ label: 'Krediye Uygun', value: mortgageEligible });
+    }
+
+    // Tapu Durumu
+    const deedStatus = getLabel('deedStatus', rd.deedStatus);
+    if (deedStatus) {
+      specs.push({ label: 'Tapu Durumu', value: deedStatus });
+    }
+
+    // Kimden
+    const listedBy = getLabel('listedBy', rd.listedBy);
+    if (listedBy) {
+      specs.push({ label: 'Kimden', value: listedBy });
+    }
+
+    // Takas
+    const exchange = getLabel('yesNo', rd.exchange);
+    if (exchange) {
+      specs.push({ label: 'Takas', value: exchange });
+    }
+  } else if (isCommercial && commercialDetails) {
+    const cd = commercialDetails;
+
+    // Emlak Tipi
+    const propertyType = getLabel('propertyType', cd.propertyType);
+    if (propertyType) {
+      specs.push({ label: 'Emlak Tipi', value: propertyType });
+    }
+
+    // Fiyat
+    const price = formatPrice(cd.price);
+    if (price) {
+      specs.push({ label: 'Fiyat', value: price });
+    }
+
+    // Ticari Tür
+    const commercialType = getLabel('commercialType', cd.commercialType);
+    if (commercialType) {
+      specs.push({ label: 'Tür', value: commercialType });
+    }
+
+    // m²
+    const area = formatArea(cd.area);
+    if (area) {
+      specs.push({ label: 'Alan', value: area });
+    }
+
+    // Oda Sayısı
+    if (cd.roomCount) {
+      specs.push({ label: 'Bölüm/Oda Sayısı', value: cd.roomCount });
+    }
+
+    // Isıtma
+    const heating = getLabel('heating', cd.heating);
+    if (heating) {
+      specs.push({ label: 'Isıtma', value: heating });
+    }
+
+    // Bina Yaşı
+    const buildingAge = getLabel('buildingAge', cd.buildingAge);
+    if (buildingAge) {
+      specs.push({ label: 'Bina Yaşı', value: buildingAge });
+    }
+
+    // Tapu Durumu
+    const deedStatus = getLabel('deedStatus', cd.deedStatus);
+    if (deedStatus) {
+      specs.push({ label: 'Tapu Durumu', value: deedStatus });
+    }
+
+    // Kimden
+    const listedBy = getLabel('listedBy', cd.listedBy);
+    if (listedBy) {
+      specs.push({ label: 'Kimden', value: listedBy });
+    }
+
+    // Takas
+    const exchange = getLabel('yesNo', cd.exchange);
+    if (exchange) {
+      specs.push({ label: 'Takas', value: exchange });
+    }
+  } else if (isLand && landDetails) {
+    const ld = landDetails;
+
+    // Emlak Tipi
+    const propertyType = getLabel('propertyType', ld.propertyType);
+    if (propertyType) {
+      specs.push({ label: 'Emlak Tipi', value: propertyType });
+    }
+
+    // İmar Durumu
+    const zoningStatus = getLabel('zoningStatus', ld.zoningStatus);
+    if (zoningStatus) {
+      specs.push({ label: 'İmar Durumu', value: zoningStatus });
+    }
+
+    // m²
+    const area = formatArea(ld.area);
+    if (area) {
+      specs.push({ label: 'Alan', value: area });
+    }
+
+    // m² Fiyatı
+    const pricePerSqm = formatPrice(ld.pricePerSqm);
+    if (pricePerSqm) {
+      specs.push({ label: 'm² Fiyatı', value: pricePerSqm });
+    }
+
+    // Ada No
+    if (ld.islandNumber) {
+      specs.push({ label: 'Ada No', value: ld.islandNumber.toString() });
+    }
+
+    // Parsel No
+    if (ld.parcelNumber) {
+      specs.push({ label: 'Parsel No', value: ld.parcelNumber.toString() });
+    }
+
+    // Pafta No
+    if (ld.sheetNumber) {
+      specs.push({ label: 'Pafta No', value: ld.sheetNumber.toString() });
+    }
+
+    // Kaks (Emsal)
+    if (ld.floorAreaRatio) {
+      specs.push({ label: 'Kaks (Emsal)', value: ld.floorAreaRatio.toString() });
+    }
+
+    // Gabari
+    if (ld.heightLimit) {
+      specs.push({ label: 'Gabari', value: ld.heightLimit + ' m' });
+    }
+
+    // Krediye Uygunluk
+    const mortgageEligible = getLabel('yesNo', ld.mortgageEligible);
+    if (mortgageEligible) {
+      specs.push({ label: 'Krediye Uygun', value: mortgageEligible });
+    }
+
+    // Tapu Durumu
+    const deedStatus = getLabel('deedStatus', ld.deedStatus);
+    if (deedStatus) {
+      specs.push({ label: 'Tapu Durumu', value: deedStatus });
+    }
+
+    // Kimden
+    const listedBy = getLabel('listedBy', ld.listedBy);
+    if (listedBy) {
+      specs.push({ label: 'Kimden', value: listedBy });
+    }
+
+    // Takas
+    const exchange = getLabel('yesNo', ld.exchange);
+    if (exchange) {
+      specs.push({ label: 'Takas', value: exchange });
+    }
+  }
+
+  // Lokasyon
+  if (property.location) {
+    specs.push({ label: 'Lokasyon', value: property.location });
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <section className="relative pt-20 pb-12 sm:pt-24 sm:pb-16 md:pt-28 md:pb-20 overflow-hidden bg-hero">
+        <DotGridBackground />
+
+        <div className="container relative z-10 px-4 mx-auto">
+          <div className="max-w-6xl mx-auto text-center text-text-white">
+            <h1 className="mb-4 sm:mb-6 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-text-white">
+              {property.title}
+            </h1>
+            {property.location && (
+              <p className="mb-2 text-base sm:text-lg md:text-xl lg:text-2xl text-blue-100">
+                {property.location}
+              </p>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Property Details Section */}
+      <section className="py-12 sm:py-16 md:py-20 bg-white">
+        <div className="container px-4 mx-auto">
+          <div className="grid max-w-6xl grid-cols-1 gap-12 mx-auto lg:grid-cols-2">
+            {/* Image Carousel & Map - First on Mobile, Right on Desktop */}
+            <div className="space-y-6 lg:order-2">
+              {property.images && property.images.length > 0 && (
+                <Carousel
+                  images={property.images}
+                  height="h-96"
+                  showThumbnails={true}
+                  autoPlay={true}
+                  autoPlayInterval={4000}
+                />
+              )}
+
+              {/* Harita - Konum varsa göster */}
+              {hasLocation && (
+                <div className="p-4 sm:p-6 bg-gray-50 rounded-xl">
+                  <h4 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-gray-800">Konum</h4>
+                  {property.location && (
+                    <p className="mb-3 sm:mb-4 text-sm sm:text-base text-gray-600">{property.location}</p>
+                  )}
+                  <div className="h-40 sm:h-48 md:h-56 overflow-hidden rounded-lg">
+                    <iframe
+                      src={`https://www.google.com/maps?q=${property.latitude},${property.longitude}&z=15&output=embed`}
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Property Details - Second on Mobile, Left on Desktop */}
+            <div className="space-y-4 lg:order-1">
+              {property.description && (
+                <div>
+                  <h2 className="mb-2 sm:mb-3 text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">
+                    Gayrimenkul Detayları
+                  </h2>
+                  <p className="mb-4 text-sm sm:text-base leading-relaxed text-gray-600">
+                    {property.description}
+                  </p>
+                </div>
+              )}
+
+              {/* Property Specifications */}
+              {specs.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-800">Özellikler</h3>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    {specs.map((spec, index) => (
+                      spec.value && (
+                        <div key={index} className="px-3 py-2 rounded-lg bg-gray-50">
+                          <p className="text-xs text-gray-500">{spec.label}</p>
+                          <p className={`text-sm font-semibold ${
+                            spec.label === 'Fiyat' || spec.label === 'm² Fiyatı' ? 'text-green-600' :
+                            spec.label === 'Emlak Tipi' && spec.value === 'Satılık' ? 'text-green-600' :
+                            spec.label === 'Emlak Tipi' && spec.value === 'Kiralık' ? 'text-blue-600' :
+                            'text-gray-800'
+                          }`}>
+                            {spec.value}
+                          </p>
+                        </div>
+                      )
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Back to Properties Button */}
+              <div className="pt-4">
+                <Button rounded={true} variant="link" href="/properties" showArrow={true}>
+                  Tüm Gayrimenkulleri Gör
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

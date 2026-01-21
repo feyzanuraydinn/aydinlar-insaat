@@ -1,0 +1,515 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// ADMIN USER MODEL
+// ============================================
+model User {
+  id               String    @id @default(cuid())
+  email            String    @unique
+  password         String
+  name             String
+  profilePhoto     String?
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+// ============================================
+// GENERAL SETTINGS - HOME PAGE
+// ============================================
+model HomePageSettings {
+  id                 String   @id @default(cuid())
+  // Hero Section
+  heroTitle          String
+  heroSubtitle       String
+  heroDefinition     String   @db.Text
+  startYear          Int      // To calculate experience years
+  completedProjects  Int
+  happyCustomers     Int
+  updatedAt          DateTime @updatedAt
+
+  @@map("home_page_settings")
+}
+
+// Hero Card Swap Component (4 cards on homepage)
+model HeroCard {
+  id          String   @id @default(cuid())
+  image       String   // Image URL
+  publicId    String?  // Cloudinary public_id for deletion
+  title       String
+  description String   @db.Text
+  order       Int      // 1, 2, 3, 4
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("hero_cards")
+}
+
+// ============================================
+// GENERAL SETTINGS - ABOUT PAGE
+// ============================================
+model AboutPageSettings {
+  id             String   @id @default(cuid())
+  aboutTitle     String
+  aboutSubtitle  String
+  aboutDefinition String  @db.Text
+  aboutImage     String   // Image URL
+  vision         String   @db.Text
+  mission        String   @db.Text
+  updatedAt      DateTime @updatedAt
+
+  @@map("about_page_settings")
+}
+
+// ============================================
+// GENERAL SETTINGS - PROJECTS PAGE
+// ============================================
+model ProjectsPageSettings {
+  id            String   @id @default(cuid())
+  projectsTitle String
+  updatedAt     DateTime @updatedAt
+
+  @@map("projects_page_settings")
+}
+
+// ============================================
+// GENERAL SETTINGS - PROPERTIES PAGE
+// ============================================
+model PropertiesPageSettings {
+  id              String   @id @default(cuid())
+  propertiesTitle String
+  updatedAt       DateTime @updatedAt
+
+  @@map("properties_page_settings")
+}
+
+// ============================================
+// GENERAL SETTINGS - CONTACT PAGE
+// ============================================
+model ContactPageSettings {
+  id                     String   @id @default(cuid())
+  contactTitle           String
+  contactTeamDescription String   @db.Text
+  latitude               Decimal? @db.Decimal(10, 8)
+  longitude              Decimal? @db.Decimal(11, 8)
+  updatedAt              DateTime @updatedAt
+
+  @@map("contact_page_settings")
+}
+
+// Contact Team Cards
+model ContactCard {
+  id         String   @id @default(cuid())
+  name       String
+  profession String?
+  phone      String
+  email      String
+  websiteUrl String?
+  image      String   // Image URL
+  publicId   String?  // Cloudinary public_id for deletion
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("contact_cards")
+}
+
+// ============================================
+// GENERAL SETTINGS - FOOTER
+// ============================================
+model FooterSettings {
+  id          String   @id @default(cuid())
+  description String   @db.Text  // Alt açıklama metni
+  phone       String              // Telefon numarası
+  email       String              // E-posta adresi
+  address     String              // Adres
+  updatedAt   DateTime @updatedAt
+
+  @@map("footer_settings")
+}
+
+// ============================================
+// PROJECTS MODEL
+// ============================================
+model Project {
+  id                    String                 @id @default(cuid())
+  // Common fields for all projects
+  title                 String
+  description           String                 @db.Text
+  year                  String
+  location              String
+  latitude              Decimal?               @db.Decimal(10, 8)
+  longitude             Decimal?               @db.Decimal(11, 8)
+  images                ProjectImage[]
+  type                  String                 // "RESIDENTIAL" or "COMMERCIAL"
+
+  // Type-specific fields
+  residentialDetails    ResidentialProject?
+  commercialDetails     CommercialProject?
+
+  // SEO & Admin
+  slug                  String                 @unique
+  featured              Boolean                @default(false)
+  featuredOrder         Int?
+  metaTitle             String?
+  metaDescription       String?                @db.Text
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  publishedAt           DateTime?
+
+  @@index([slug])
+  @@index([featured])
+  @@index([type])
+  @@map("projects")
+}
+
+model ProjectImage {
+  id        String   @id @default(cuid())
+  projectId String
+  url       String
+  publicId  String?  // Cloudinary public_id for deletion
+  alt       String
+  order     Int      @default(0)
+  isCover   Boolean  @default(false) // Kapak fotoğrafı mı?
+  createdAt DateTime @default(now())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@map("project_images")
+}
+
+// Residential Project Details
+model ResidentialProject {
+  id                String  @id @default(cuid())
+  projectId         String  @unique
+  project           Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  // Fiyat
+  price             Decimal? @db.Decimal(12, 2)
+
+  // Emlak Tipi
+  propertyType      String? // "FOR_SALE", "FOR_RENT", "TRANSFER_SALE", "TRANSFER_RENT"
+
+  // m² (Brüt)
+  grossArea         Decimal? @db.Decimal(10, 2)
+
+  // m² (Net)
+  netArea           Decimal? @db.Decimal(10, 2)
+
+  // Oda Sayısı
+  roomCount         String? // "STUDIO", "1+1", "1.5+1", "2+0", "2+1", "2.5+1", "2+2", "3+0", "3+1", "3.5+1", "3+2", "3+3", "4+0", "4+1", "4.5+1", "4.5+2", "4+2", "4+3", "4+4", "5+1", "5.5+1", "5+2", "5+3"
+
+  // Konut Tipi
+  housingType       String? // "DUPLEX", "TOP_FLOOR", "MIDDLE_FLOOR", "MIDDLE_FLOOR_DUPLEX", "GARDEN_DUPLEX", "ROOF_DUPLEX", "FOURPLEX", "REVERSE_DUPLEX", "TRIPLEX"
+
+  // Bina Yaşı
+  buildingAge       String? // "0_READY", "0_CONSTRUCTION", "1", "2", "3", "4", "5", "6_10", "11_15", "16_20", "21_25", "26_30", "31_PLUS"
+
+  // Bulunduğu Kat
+  currentFloor      String? // "BASEMENT_4", "BASEMENT_3", "BASEMENT_2", "BASEMENT_1", "BASEMENT", "GROUND", "GARDEN", "ENTRANCE", "HIGH_ENTRANCE", "DETACHED", "VILLA", "ROOF", "1" to "30_PLUS"
+
+  // Kat Sayısı
+  totalFloors       String? // "1" to "30_PLUS"
+
+  // Isıtma
+  heating           String? // "NONE", "STOVE", "NATURAL_GAS_STOVE", "FLOOR_HEATING_SYSTEM", "CENTRAL", "CENTRAL_METER", "COMBI_NATURAL_GAS", "COMBI_ELECTRIC", "UNDERFLOOR_HEATING", "AIR_CONDITIONING", "FANCOIL", "SOLAR_ENERGY", "ELECTRIC_RADIATOR", "GEOTHERMAL", "FIREPLACE", "VRV", "HEAT_PUMP"
+
+  // Banyo Sayısı
+  bathroomCount     String? // "NONE", "1", "2", "3", "4", "5", "6", "6_PLUS"
+
+  // Mutfak
+  kitchen           String? // "OPEN_AMERICAN", "CLOSED"
+
+  // Balkon
+  balcony           String? // "YES", "NO"
+
+  // Asansör
+  elevator          String? // "YES", "NO"
+
+  // Otopark
+  parking           String? // "OPEN", "CLOSED", "OPEN_AND_CLOSED", "NONE"
+
+  // Eşyalı
+  furnished         String? // "YES", "NO"
+
+  // Kullanım Durumu
+  usageStatus       String? // "EMPTY", "TENANT", "OWNER"
+
+  // Site İçerisinde
+  inComplex         String? // "YES", "NO"
+
+  // Krediye Uygunluk
+  mortgageEligible  String? // "YES", "NO"
+
+  // Tapu Durumu
+  deedStatus        String? // "CONDOMINIUM", "EASEMENT", "SHARED_DEED", "DETACHED_DEED", "LAND_DEED", "COOPERATIVE_DEED", "USUFRUCT", "FOREIGN_DEED", "NO_DEED"
+
+  // Kimden
+  listedBy          String? // "OWNER", "AGENCY", "CONSTRUCTION_COMPANY", "BANK"
+
+  // Takaslı
+  exchange          String? // "YES", "NO"
+
+  @@map("residential_projects")
+}
+
+// Commercial Project Details
+model CommercialProject {
+  id                String  @id @default(cuid())
+  projectId         String  @unique
+  project           Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  // Fiyat
+  price             Decimal? @db.Decimal(12, 2)
+
+  // Emlak Tipi
+  propertyType      String? // "FOR_SALE", "FOR_RENT", "TRANSFER_SALE", "TRANSFER_RENT"
+
+  // Türü
+  commercialType    String? // "SHOP", "GAS_STATION", "WORKSHOP", "MALL", "KIOSK", "OFFICE", "FARM", "WAREHOUSE", "WEDDING_HALL", "POWER_PLANT", "FACTORY", "GARAGE", "MANUFACTURING", "BUSINESS_CENTER_FLOOR", "CAFE_BAR", "CANTEEN", "BREAKFAST_GARDEN", "TEA_HOUSE", "FULL_BUILDING", "PARKING", "CAR_WASH_SALON", "BAKERY", "MARKET_PLACE", "PLAZA", "PLAZA_FLOOR", "RESTAURANT", "RESIDENCE_FLOOR", "HEALTH_CENTER", "CINEMA_HALL", "SPA", "SPORTS_FACILITY", "VILLA", "DORMITORY"
+
+  // m²
+  area              Decimal? @db.Decimal(10, 2)
+
+  // Bölüm & Oda Sayısı
+  roomCount         String? // "STUDIO", "1+1", "1.5+1", "2+0", "2+1", "2.5+1", "2+2", "3+0", "3+1", "3.5+1", "3+2", "3+3", "4+0", "4+1", "4.5+1", "4.5+2", "4+2", "4+3", "4+4", "5+1", "5.5+1", "5+2", "5+3"
+
+  // Isıtma
+  heating           String? // "NONE", "STOVE", "NATURAL_GAS_STOVE", "FLOOR_HEATING_SYSTEM", "CENTRAL", "CENTRAL_METER", "COMBI_NATURAL_GAS", "COMBI_ELECTRIC", "UNDERFLOOR_HEATING", "AIR_CONDITIONING", "FANCOIL", "SOLAR_ENERGY", "ELECTRIC_RADIATOR", "GEOTHERMAL", "FIREPLACE", "VRV", "HEAT_PUMP"
+
+  // Bina Yaşı
+  buildingAge       String? // "0_READY", "0_CONSTRUCTION", "1", "2", "3", "4", "5", "6_10", "11_15", "16_20", "21_25", "26_30", "31_PLUS"
+
+  // Tapu Durumu
+  deedStatus        String? // "CONDOMINIUM", "EASEMENT", "SHARED_DEED", "DETACHED_DEED", "LAND_DEED", "COOPERATIVE_DEED", "USUFRUCT", "FOREIGN_DEED", "NO_DEED"
+
+  // Kimden
+  listedBy          String? // "OWNER", "AGENCY", "CONSTRUCTION_COMPANY", "BANK"
+
+  // Takaslı
+  exchange          String? // "YES", "NO"
+
+  @@map("commercial_projects")
+}
+
+// ============================================
+// PROPERTIES MODEL
+// ============================================
+model Property {
+  id                    String                 @id @default(cuid())
+  // Common fields for all properties
+  title                 String
+  description           String                 @db.Text
+  location              String
+  latitude              Decimal?               @db.Decimal(10, 8)
+  longitude             Decimal?               @db.Decimal(11, 8)
+  images                PropertyImage[]
+  type                  String                 // "RESIDENTIAL", "COMMERCIAL", or "LAND"
+
+  // Type-specific fields
+  residentialDetails    ResidentialProperty?
+  commercialDetails     CommercialProperty?
+  landDetails           LandProperty?
+
+  // SEO & Admin
+  slug                  String                 @unique
+  featured              Boolean                @default(false)
+  featuredOrder         Int?
+  metaTitle             String?
+  metaDescription       String?                @db.Text
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  publishedAt           DateTime?
+
+  @@index([slug])
+  @@index([featured])
+  @@index([type])
+  @@map("properties")
+}
+
+model PropertyImage {
+  id         String   @id @default(cuid())
+  propertyId String
+  url        String
+  publicId   String?  // Cloudinary public_id for deletion
+  alt        String
+  order      Int      @default(0)
+  isCover    Boolean  @default(false) // Kapak fotoğrafı mı?
+  createdAt  DateTime @default(now())
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId])
+  @@map("property_images")
+}
+
+// Residential Property Details (Same as Residential Project)
+model ResidentialProperty {
+  id                String   @id @default(cuid())
+  propertyId        String   @unique
+  property          Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  // Fiyat
+  price             Decimal? @db.Decimal(12, 2)
+
+  // Emlak Tipi
+  propertyType      String? // "FOR_SALE", "FOR_RENT", "TRANSFER_SALE", "TRANSFER_RENT"
+
+  // m² (Brüt)
+  grossArea         Decimal? @db.Decimal(10, 2)
+
+  // m² (Net)
+  netArea           Decimal? @db.Decimal(10, 2)
+
+  // Oda Sayısı
+  roomCount         String? // "STUDIO", "1+1", "1.5+1", "2+0", "2+1", "2.5+1", "2+2", "3+0", "3+1", "3.5+1", "3+2", "3+3", "4+0", "4+1", "4.5+1", "4.5+2", "4+2", "4+3", "4+4", "5+1", "5.5+1", "5+2", "5+3"
+
+  // Konut Tipi
+  housingType       String? // "DUPLEX", "TOP_FLOOR", "MIDDLE_FLOOR", "MIDDLE_FLOOR_DUPLEX", "GARDEN_DUPLEX", "ROOF_DUPLEX", "FOURPLEX", "REVERSE_DUPLEX", "TRIPLEX"
+
+  // Bina Yaşı
+  buildingAge       String? // "0_READY", "0_CONSTRUCTION", "1", "2", "3", "4", "5", "6_10", "11_15", "16_20", "21_25", "26_30", "31_PLUS"
+
+  // Bulunduğu Kat
+  currentFloor      String? // "BASEMENT_4", "BASEMENT_3", "BASEMENT_2", "BASEMENT_1", "BASEMENT", "GROUND", "GARDEN", "ENTRANCE", "HIGH_ENTRANCE", "DETACHED", "VILLA", "ROOF", "1" to "30_PLUS"
+
+  // Kat Sayısı
+  totalFloors       String? // "1" to "30_PLUS"
+
+  // Isıtma
+  heating           String? // "NONE", "STOVE", "NATURAL_GAS_STOVE", "FLOOR_HEATING_SYSTEM", "CENTRAL", "CENTRAL_METER", "COMBI_NATURAL_GAS", "COMBI_ELECTRIC", "UNDERFLOOR_HEATING", "AIR_CONDITIONING", "FANCOIL", "SOLAR_ENERGY", "ELECTRIC_RADIATOR", "GEOTHERMAL", "FIREPLACE", "VRV", "HEAT_PUMP"
+
+  // Banyo Sayısı
+  bathroomCount     String? // "NONE", "1", "2", "3", "4", "5", "6", "6_PLUS"
+
+  // Mutfak
+  kitchen           String? // "OPEN_AMERICAN", "CLOSED"
+
+  // Balkon
+  balcony           String? // "YES", "NO"
+
+  // Asansör
+  elevator          String? // "YES", "NO"
+
+  // Otopark
+  parking           String? // "OPEN", "CLOSED", "OPEN_AND_CLOSED", "NONE"
+
+  // Eşyalı
+  furnished         String? // "YES", "NO"
+
+  // Kullanım Durumu
+  usageStatus       String? // "EMPTY", "TENANT", "OWNER"
+
+  // Site İçerisinde
+  inComplex         String? // "YES", "NO"
+
+  // Krediye Uygunluk
+  mortgageEligible  String? // "YES", "NO"
+
+  // Tapu Durumu
+  deedStatus        String? // "CONDOMINIUM", "EASEMENT", "SHARED_DEED", "DETACHED_DEED", "LAND_DEED", "COOPERATIVE_DEED", "USUFRUCT", "FOREIGN_DEED", "NO_DEED"
+
+  // Kimden
+  listedBy          String? // "OWNER", "AGENCY", "CONSTRUCTION_COMPANY", "BANK"
+
+  // Takaslı
+  exchange          String? // "YES", "NO"
+
+  @@map("residential_properties")
+}
+
+// Commercial Property Details (Same as Commercial Project)
+model CommercialProperty {
+  id                String   @id @default(cuid())
+  propertyId        String   @unique
+  property          Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  // Fiyat
+  price             Decimal? @db.Decimal(12, 2)
+
+  // Emlak Tipi
+  propertyType      String? // "FOR_SALE", "FOR_RENT", "TRANSFER_SALE", "TRANSFER_RENT"
+
+  // Türü
+  commercialType    String? // "SHOP", "GAS_STATION", "WORKSHOP", "MALL", "KIOSK", "OFFICE", "FARM", "WAREHOUSE", "WEDDING_HALL", "POWER_PLANT", "FACTORY", "GARAGE", "MANUFACTURING", "BUSINESS_CENTER_FLOOR", "CAFE_BAR", "CANTEEN", "BREAKFAST_GARDEN", "TEA_HOUSE", "FULL_BUILDING", "PARKING", "CAR_WASH_SALON", "BAKERY", "MARKET_PLACE", "PLAZA", "PLAZA_FLOOR", "RESTAURANT", "RESIDENCE_FLOOR", "HEALTH_CENTER", "CINEMA_HALL", "SPA", "SPORTS_FACILITY", "VILLA", "DORMITORY"
+
+  // m²
+  area              Decimal? @db.Decimal(10, 2)
+
+  // Bölüm & Oda Sayısı
+  roomCount         String? // "STUDIO", "1+1", "1.5+1", "2+0", "2+1", "2.5+1", "2+2", "3+0", "3+1", "3.5+1", "3+2", "3+3", "4+0", "4+1", "4.5+1", "4.5+2", "4+2", "4+3", "4+4", "5+1", "5.5+1", "5+2", "5+3"
+
+  // Isıtma
+  heating           String? // "NONE", "STOVE", "NATURAL_GAS_STOVE", "FLOOR_HEATING_SYSTEM", "CENTRAL", "CENTRAL_METER", "COMBI_NATURAL_GAS", "COMBI_ELECTRIC", "UNDERFLOOR_HEATING", "AIR_CONDITIONING", "FANCOIL", "SOLAR_ENERGY", "ELECTRIC_RADIATOR", "GEOTHERMAL", "FIREPLACE", "VRV", "HEAT_PUMP"
+
+  // Bina Yaşı
+  buildingAge       String? // "0_READY", "0_CONSTRUCTION", "1", "2", "3", "4", "5", "6_10", "11_15", "16_20", "21_25", "26_30", "31_PLUS"
+
+  // Tapu Durumu
+  deedStatus        String? // "CONDOMINIUM", "EASEMENT", "SHARED_DEED", "DETACHED_DEED", "LAND_DEED", "COOPERATIVE_DEED", "USUFRUCT", "FOREIGN_DEED", "NO_DEED"
+
+  // Kimden
+  listedBy          String? // "OWNER", "AGENCY", "CONSTRUCTION_COMPANY", "BANK"
+
+  // Takaslı
+  exchange          String? // "YES", "NO"
+
+  @@map("commercial_properties")
+}
+
+// Land Property Details
+model LandProperty {
+  id                String   @id @default(cuid())
+  propertyId        String   @unique
+  property          Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  // Emlak Tipi
+  propertyType      String? // "FOR_SALE", "FOR_RENT", "FOR_FLOOR_EQUIVALENT"
+
+  // İmar Durumu
+  zoningStatus      String? // "ISLAND", "A_LEGEND", "LAND", "VINEYARD_GARDEN", "WAREHOUSE", "EDUCATION", "RESIDENTIAL", "CULTURAL_FACILITY", "MISCELLANEOUS", "SPECIAL_USE", "HEALTH", "INDUSTRIAL", "CONSERVATION_AREA", "FIELD", "FIELD_VINEYARD", "COMMERCIAL", "COMMERCIAL_RESIDENTIAL", "MASS_HOUSING", "TOURISM", "TOURISM_RESIDENTIAL", "TOURISM_COMMERCIAL", "VILLA", "OLIVE_GROVE"
+
+  // m²
+  area              Decimal? @db.Decimal(10, 2)
+
+  // m² Fiyatı
+  pricePerSqm       Decimal? @db.Decimal(12, 2)
+
+  // Ada No
+  islandNumber      Int?
+
+  // Parsel No
+  parcelNumber      Int?
+
+  // Pafta No
+  sheetNumber       Int?
+
+  // Kaks (Emsal)
+  floorAreaRatio    Decimal? @db.Decimal(5, 2)
+
+  // Gabari
+  heightLimit       Decimal? @db.Decimal(6, 2)
+
+  // Krediye Uygunluk
+  mortgageEligible  String? // "YES", "NO"
+
+  // Tapu Durumu
+  deedStatus        String? // "CONDOMINIUM", "EASEMENT", "SHARED_DEED", "DETACHED_DEED", "LAND_DEED", "COOPERATIVE_DEED", "USUFRUCT", "FOREIGN_DEED", "NO_DEED"
+
+  // Kimden
+  listedBy          String? // "OWNER", "AGENCY", "CONSTRUCTION_COMPANY", "BANK"
+
+  // Takaslı
+  exchange          String? // "YES", "NO"
+
+  @@map("land_properties")
+}
