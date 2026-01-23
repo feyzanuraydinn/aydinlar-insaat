@@ -1,4 +1,3 @@
-// Organization Schema - Şirket bilgileri için
 export function OrganizationJsonLd() {
   const schema = {
     "@context": "https://schema.org",
@@ -26,9 +25,7 @@ export function OrganizationJsonLd() {
       contactType: "customer service",
       availableLanguage: "Turkish",
     },
-    sameAs: [
-      // Sosyal medya hesapları varsa eklenebilir
-    ],
+    sameAs: [],
     areaServed: {
       "@type": "Country",
       name: "Turkey",
@@ -50,7 +47,6 @@ export function OrganizationJsonLd() {
   )
 }
 
-// LocalBusiness Schema - Yerel işletme için
 export function LocalBusinessJsonLd() {
   const schema = {
     "@context": "https://schema.org",
@@ -89,7 +85,6 @@ export function LocalBusinessJsonLd() {
   )
 }
 
-// WebSite Schema - Site geneli arama için
 export function WebsiteJsonLd() {
   const schema = {
     "@context": "https://schema.org",
@@ -114,7 +109,6 @@ export function WebsiteJsonLd() {
   )
 }
 
-// BreadcrumbList Schema - Sayfa yolu için
 interface BreadcrumbItem {
   name: string
   url: string
@@ -140,7 +134,6 @@ export function BreadcrumbJsonLd({ items }: { items: BreadcrumbItem[] }) {
   )
 }
 
-// RealEstateListing Schema - Gayrimenkul ilanları için
 interface RealEstateListingProps {
   name: string
   description: string

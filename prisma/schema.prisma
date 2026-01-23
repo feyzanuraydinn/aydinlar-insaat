@@ -132,7 +132,6 @@ model FooterSettings {
   description String   @db.Text  // Alt açıklama metni
   phone       String              // Telefon numarası
   email       String              // E-posta adresi
-  address     String              // Adres
   updatedAt   DateTime @updatedAt
 
   @@map("footer_settings")

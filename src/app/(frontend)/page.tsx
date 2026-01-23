@@ -9,6 +9,7 @@ import PropertyCard from "@/components/frontend/PropertyCard";
 import DotGridBackground from "@/components/frontend/DotGridBackground";
 import { Project, Property } from "@/types";
 import { PageSpinner } from "@/components/ui/Spinner";
+import AnimatedSection from "@/components/ui/AnimatedSection";
 
 interface HeroCard {
   id: string;
@@ -171,50 +172,62 @@ Yerel ve global müşterilerine sürdürülebilir, güvenli ve uzun ömürlü ya
         <div className="container relative z-[10] flex items-center h-full px-6 sm:px-8 md:px-10 lg:px-4 mx-auto">
           <div className="grid items-center w-full grid-cols-1 gap-8 lg:grid-cols-2">
             <div className="text-center text-text-white">
-              <h1 className="mb-4 text-3xl font-bold leading-tight sm:mb-6 sm:text-4xl md:text-5xl text-text-white">
-                {heroTitle}
-              </h1>
-              <h2 className="mb-4 text-xl font-semibold text-primary-bg-hover sm:mb-6 sm:text-2xl md:text-3xl">
-                {heroSubtitle}
-              </h2>
-              <p className="max-w-2xl mx-auto mb-6 text-base leading-relaxed text-primary-bg sm:mb-8 sm:text-lg md:text-xl lg:text-2xl lg:max-w-none">
-                {heroDefinition}
-              </p>
+              <AnimatedSection animation="fade-down" duration={800}>
+                <h1 className="mb-4 text-3xl font-bold leading-tight sm:mb-6 sm:text-4xl md:text-5xl text-text-white">
+                  {heroTitle}
+                </h1>
+              </AnimatedSection>
 
-              <div className="grid max-w-md grid-cols-3 gap-3 mx-auto mb-6 sm:gap-6 sm:mb-8 lg:max-w-none">
-                <div className="text-center">
-                  <div className="mb-1 text-2xl font-bold sm:mb-2 sm:text-3xl text-text-white">
-                    {yearsOfExperience}+
-                  </div>
-                  <div className="text-xs font-medium text-primary-bg-hover sm:text-sm md:text-base">
-                    Yıllık Deneyim
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="mb-1 text-2xl font-bold sm:mb-2 sm:text-3xl text-text-white">
-                    {completedProjects}+
-                  </div>
-                  <div className="text-xs font-medium text-primary-bg-hover sm:text-sm md:text-base">
-                    Tamamlanan Proje
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="mb-1 text-2xl font-bold sm:mb-2 sm:text-3xl text-text-white">
-                    {happyCustomers}+
-                  </div>
-                  <div className="text-xs font-medium text-primary-bg-hover sm:text-sm md:text-base">
-                    Mutlu Müşteri
-                  </div>
-                </div>
-              </div>
+              <AnimatedSection animation="fade-right" duration={800} delay={100}>
+                <h2 className="mb-4 text-xl font-semibold text-primary-bg-hover sm:mb-6 sm:text-2xl md:text-3xl">
+                  {heroSubtitle}
+                </h2>
+              </AnimatedSection>
 
-              <div className="flex flex-row justify-center gap-3 sm:gap-4">
-                <Button href="/projects" scaleOnHover>Projeleri Keşfet</Button>
-                <Button href="/contact" scaleOnHover>İletişime Geç</Button>
-              </div>
+              <AnimatedSection animation="fade-right" duration={800} delay={200}>
+                <p className="max-w-2xl mx-auto mb-6 text-base leading-relaxed text-primary-bg sm:mb-8 sm:text-lg md:text-xl lg:text-2xl lg:max-w-none">
+                  {heroDefinition}
+                </p>
+              </AnimatedSection>
+
+              <AnimatedSection animation="fade-up" duration={800} delay={300}>
+                <div className="grid max-w-md grid-cols-3 gap-3 mx-auto mb-6 sm:gap-6 sm:mb-8 lg:max-w-none">
+                  <div className="text-center">
+                    <div className="mb-1 text-2xl font-bold sm:mb-2 sm:text-3xl text-text-white">
+                      {yearsOfExperience}+
+                    </div>
+                    <div className="text-xs font-medium text-primary-bg-hover sm:text-sm md:text-base">
+                      Yıllık Deneyim
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="mb-1 text-2xl font-bold sm:mb-2 sm:text-3xl text-text-white">
+                      {completedProjects}+
+                    </div>
+                    <div className="text-xs font-medium text-primary-bg-hover sm:text-sm md:text-base">
+                      Tamamlanan Proje
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="mb-1 text-2xl font-bold sm:mb-2 sm:text-3xl text-text-white">
+                      {happyCustomers}+
+                    </div>
+                    <div className="text-xs font-medium text-primary-bg-hover sm:text-sm md:text-base">
+                      Mutlu Müşteri
+                    </div>
+                  </div>
+                </div>
+              </AnimatedSection>
+
+              <AnimatedSection animation="fade-up" duration={800} delay={400}>
+                <div className="flex flex-row justify-center gap-3 sm:gap-4">
+                  <Button href="/projects" scaleOnHover>Projeleri Keşfet</Button>
+                  <Button href="/contact" scaleOnHover>İletişime Geç</Button>
+                </div>
+              </AnimatedSection>
             </div>
 
-            <div className="relative hidden lg:flex items-center justify-center h-[400px] xl:h-[500px]">
+            <AnimatedSection animation="fade-left" duration={800} delay={200} className="relative hidden lg:flex items-center justify-center h-[400px] xl:h-[500px]">
               <CardSwap
                 cardDistance={45}
                 verticalDistance={50}
@@ -240,7 +253,7 @@ Yerel ve global müşterilerine sürdürülebilir, güvenli ve uzun ömürlü ya
                   </Card>
                 ))}
               </CardSwap>
-            </div>
+            </AnimatedSection>
           </div>
         </div>
 
@@ -257,133 +270,151 @@ Yerel ve global müşterilerine sürdürülebilir, güvenli ve uzun ömürlü ya
         <div className="px-4 mx-auto sm:px-6 md:px-8 max-w-7xl lg:px-12 xl:px-16">
           <div className="grid items-center grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-12">
             <div className="order-2 p-4 bg-surface rounded-lg sm:p-6 md:p-8 lg:order-1">
-              <h2 className="mb-4 text-sm font-bold tracking-wide uppercase sm:mb-6 sm:text-base md:text-lg lg:text-xl text-hero-secondary">
-                {yearsOfExperience} YILLIK TECRÜBE İLE SEKTÖRDE GÜVENİN VE KALİTENİN ADRESİ
-              </h2>
+              <AnimatedSection animation="fade-down" duration={600}>
+                <h2 className="mb-4 text-sm font-bold tracking-wide uppercase sm:mb-6 sm:text-base md:text-lg lg:text-xl text-hero-secondary">
+                  {yearsOfExperience} YILLIK TECRÜBE İLE SEKTÖRDE GÜVENİN VE KALİTENİN ADRESİ
+                </h2>
+              </AnimatedSection>
 
-              <div className="text-xs leading-relaxed text-text-secondary sm:text-sm md:text-base">
-                <p className="text-justify whitespace-pre-line">
-                  {aboutDefinition}
-                </p>
-              </div>
+              <AnimatedSection animation="fade-right" duration={600} delay={100}>
+                <div className="text-xs leading-relaxed text-text-secondary sm:text-sm md:text-base">
+                  <p className="text-justify whitespace-pre-line">
+                    {aboutDefinition}
+                  </p>
+                </div>
+              </AnimatedSection>
 
-              <div className="flex flex-col gap-4 mt-6 sm:gap-6 sm:mt-8 sm:flex-row">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center flex-shrink-0 rounded-full w-9 h-9 sm:w-10 sm:h-10 bg-hero-secondary">
-                    <svg
-                      className="w-4 h-4 sm:w-5 sm:h-5 text-text-white"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-                    </svg>
+              <AnimatedSection animation="fade-up" duration={600} delay={200}>
+                <div className="flex flex-col gap-4 mt-6 sm:gap-6 sm:mt-8 sm:flex-row">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center flex-shrink-0 rounded-full w-9 h-9 sm:w-10 sm:h-10 bg-hero-secondary">
+                      <svg
+                        className="w-4 h-4 sm:w-5 sm:h-5 text-text-white"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-xs text-text-tertiary sm:text-sm">Bizi Arayın</p>
+                      <p className="text-sm font-semibold sm:text-base text-hero-secondary">444 91 37</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs text-text-tertiary sm:text-sm">Bizi Arayın</p>
-                    <p className="text-sm font-semibold sm:text-base text-hero-secondary">444 91 37</p>
+
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center flex-shrink-0 rounded-full w-9 h-9 sm:w-10 sm:h-10 bg-hero-secondary">
+                      <svg
+                        className="w-4 h-4 sm:w-5 sm:h-5 text-text-white"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-xs text-text-tertiary sm:text-sm">Bize Yazın</p>
+                      <p className="text-xs font-semibold sm:text-sm text-hero-secondary">
+                        info@aydinlarinsaat.com
+                      </p>
+                    </div>
                   </div>
                 </div>
+              </AnimatedSection>
 
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center flex-shrink-0 rounded-full w-9 h-9 sm:w-10 sm:h-10 bg-hero-secondary">
-                    <svg
-                      className="w-4 h-4 sm:w-5 sm:h-5 text-text-white"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-xs text-text-tertiary sm:text-sm">Bize Yazın</p>
-                    <p className="text-xs font-semibold sm:text-sm text-hero-secondary">
-                      info@aydinlarinsaat.com
-                    </p>
-                  </div>
+              <AnimatedSection animation="fade-up" duration={600} delay={300}>
+                <div className="mt-6 sm:mt-8">
+                  <Button rounded={true} variant="link" size="small" href="/about">
+                    DEVAMINI OKU
+                  </Button>
                 </div>
-              </div>
-
-              <div className="mt-6 sm:mt-8">
-                <Button rounded={true} variant="link" size="small" href="/about">
-                  DEVAMINI OKU
-                </Button>
-              </div>
+              </AnimatedSection>
             </div>
 
-            <div className="relative h-[200px] sm:h-[250px] md:h-[300px] lg:h-[450px] xl:h-[500px] rounded-lg overflow-hidden order-1 lg:order-2">
+            <AnimatedSection animation="fade-left" duration={800} delay={100} className="relative h-[200px] sm:h-[250px] md:h-[300px] lg:h-[450px] xl:h-[500px] rounded-lg overflow-hidden order-1 lg:order-2">
               <img
                 src={settings?.aboutPage?.aboutImage || "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070&auto=format&fit=crop"}
                 alt="İnşaat Vinçleri"
                 className="object-cover w-full h-full"
               />
+            </AnimatedSection>
+          </div>
+        </div>
+      </section>
+
+      {projects.length > 0 && (
+        <section className="py-16 bg-surface isolate [contain:layout_style_paint]">
+          <div className="container px-4 mx-auto">
+            <AnimatedSection animation="fade-down" duration={600}>
+              <div className="mb-12 text-center">
+                <h2 className="text-3xl font-bold text-text-heading md:text-4xl">
+                  Öne Çıkan Projeler
+                </h2>
+              </div>
+            </AnimatedSection>
+
+            <div className="box-container">
+              {projects.map((project, index) => {
+                const getAnimation = () => {
+                  if (projects.length === 1) return "fade-up";
+                  if (projects.length === 2) return index === 0 ? "fade-right" : "fade-left";
+                  return index === 0 ? "fade-right" : index === 1 ? "fade-up" : "fade-left";
+                };
+                return (
+                  <AnimatedSection key={project.id} animation={getAnimation()} duration={600} delay={index * 100} className="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[380px]">
+                    <ProjectCard project={project} />
+                  </AnimatedSection>
+                );
+              })}
             </div>
-          </div>
-        </div>
-      </section>
 
-      <section className="py-16 bg-surface isolate [contain:layout_style_paint]">
-        <div className="container px-4 mx-auto">
-          <div className="mb-12 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-text-heading md:text-4xl">
-              Öne Çıkan Projeler
-            </h2>
-            <p className="max-w-2xl mx-auto text-text-secondary">
-              Modern mimari ve kaliteli işçilikle hayata geçirdiğimiz
-              projelerimizi keşfedin. Kartların üzerine gelerek detayları görün.
-            </p>
-          </div>
-
-          <div className="box-container">
-            {projects.length > 0 ? (
-              projects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))
-            ) : (
-              <div className="py-12 text-center col-span-full">
-                <p className="text-lg text-text-tertiary">Proje bulunamadı</p>
+            <AnimatedSection animation="fade-up" duration={600} delay={300}>
+              <div className="flex justify-center mt-8">
+                <Link href="/projects">
+                  <Button rounded={true} variant="link">Tüm Projeler</Button>
+                </Link>
               </div>
-            )}
+            </AnimatedSection>
           </div>
+        </section>
+      )}
 
-          <div className="flex justify-center mt-8">
-            <Link href="/projects">
-              <Button rounded={true} variant="link">Tüm Projeler</Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-16 bg-surface">
-        <div className="container px-4 mx-auto">
-          <div className="mb-12 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-text-heading md:text-4xl">
-              Öne Çıkan Gayrimenkuller
-            </h2>
-            <p className="max-w-2xl mx-auto text-text-secondary">
-              İşyeri, ofis, depo ve dükkan gibi çeşitli gayrimenkul fırsatları.
-              Yatırımınızı değerlendirin.
-            </p>
-          </div>
-
-          <div className="box-container">
-            {properties.length > 0 ? (
-              properties.map((property) => (
-                <PropertyCard key={property.id} property={property} />
-              ))
-            ) : (
-              <div className="py-12 text-center col-span-full">
-                <p className="text-lg text-text-tertiary">Gayrimenkul bulunamadı</p>
+      {properties.length > 0 && (
+        <section className="py-16 bg-surface">
+          <div className="container px-4 mx-auto">
+            <AnimatedSection animation="fade-down" duration={600}>
+              <div className="mb-12 text-center">
+                <h2 className="text-3xl font-bold text-text-heading md:text-4xl">
+                  Öne Çıkan Gayrimenkuller
+                </h2>
               </div>
-            )}
-          </div>
+            </AnimatedSection>
 
-          <div className="flex justify-center mt-8">
-            <Link href="/properties">
-              <Button  rounded={true} variant="link">Tüm Gayrimenkuller</Button>
-            </Link>
+            <div className="box-container">
+              {properties.map((property, index) => {
+                const getAnimation = () => {
+                  if (properties.length === 1) return "fade-up";
+                  if (properties.length === 2) return index === 0 ? "fade-right" : "fade-left";
+                  return index === 0 ? "fade-right" : index === 1 ? "fade-up" : "fade-left";
+                };
+                return (
+                  <AnimatedSection key={property.id} animation={getAnimation()} duration={600} delay={index * 100} className="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[380px]">
+                    <PropertyCard property={property} />
+                  </AnimatedSection>
+                );
+              })}
+            </div>
+
+            <AnimatedSection animation="fade-up" duration={600} delay={300}>
+              <div className="flex justify-center mt-8">
+                <Link href="/properties">
+                  <Button rounded={true} variant="link">Tüm Gayrimenkuller</Button>
+                </Link>
+              </div>
+            </AnimatedSection>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }

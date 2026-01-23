@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-// GET - Get single project by slug or id (public)
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
@@ -9,7 +8,6 @@ export async function GET(
   try {
     const { slug } = await params
 
-    // Önce slug ile ara, bulamazsa id ile ara
     let project = await prisma.project.findFirst({
       where: {
         OR: [
@@ -19,7 +17,10 @@ export async function GET(
       },
       include: {
         images: {
-          orderBy: { order: 'asc' }
+          orderBy: [
+            { isCover: 'desc' },
+            { order: 'asc' }
+          ]
         },
         residentialDetails: true,
         commercialDetails: true

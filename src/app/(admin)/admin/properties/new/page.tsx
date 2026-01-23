@@ -13,7 +13,6 @@ import { useToast } from "@/components/admin/Toast"
 import ConfirmModal from "@/components/admin/ConfirmModal"
 import { useApi } from "@/hooks/useApi"
 
-// Leaflet'i sadece istemci tarafında yükle
 const LocationPicker = dynamic(() => import("@/components/admin/LocationPicker"), {
   ssr: false,
   loading: () => (
@@ -79,7 +78,6 @@ export default function NewPropertyPage() {
   const handleChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
 
-    // Auto-generate slug from title
     if (field === 'title' && !formData.slug) {
       const slug = value
         .toLowerCase()
@@ -238,7 +236,6 @@ export default function NewPropertyPage() {
               </div>
             )}
 
-            {/* Temel Bilgiler */}
             <div className="space-y-4 sm:space-y-6">
               <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-text-heading border-b border-border pb-2">Temel Bilgiler</h2>
 
@@ -286,7 +283,6 @@ export default function NewPropertyPage() {
               />
             </div>
 
-            {/* Konut Detayları */}
             {formData.type === "RESIDENTIAL" && (
               <div className="space-y-4 sm:space-y-6 border-t border-border pt-6 sm:pt-8">
                 <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-text-heading border-b border-border pb-2">Konut Detayları</h2>
@@ -448,7 +444,6 @@ export default function NewPropertyPage() {
               </div>
             )}
 
-            {/* Ticari Detayları */}
             {formData.type === "COMMERCIAL" && (
               <div className="space-y-4 sm:space-y-6 border-t border-border pt-6 sm:pt-8">
                 <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-text-heading border-b border-border pb-2">Ticari Gayrimenkul Detayları</h2>
@@ -527,7 +522,6 @@ export default function NewPropertyPage() {
               </div>
             )}
 
-            {/* Arsa Detayları */}
             {formData.type === "LAND" && (
               <div className="space-y-4 sm:space-y-6 border-t border-border pt-6 sm:pt-8">
                 <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-text-heading border-b border-border pb-2">Arsa Detayları</h2>
@@ -628,7 +622,6 @@ export default function NewPropertyPage() {
               </div>
             )}
 
-            {/* Görseller */}
             <div className="space-y-4 sm:space-y-6 border-t border-border pt-6 sm:pt-8">
               <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-text-heading border-b border-border pb-2">Gayrimenkul Görselleri</h2>
 
@@ -644,14 +637,14 @@ export default function NewPropertyPage() {
                     <div key={image.preview} className="relative group">
                       <img src={image.preview} alt={`Görsel ${index + 1}`} className="w-full h-24 sm:h-28 lg:h-32 object-cover rounded-lg" />
                       {image.isCover && (
-                        <div className="absolute top-1.5 sm:top-2 left-1.5 sm:left-2 bg-blue-500 text-gray-50 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-semibold">
+                        <div className="absolute top-1.5 sm:top-2 left-1.5 sm:left-2 bg-success text-text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-semibold">
                           Kapak
                         </div>
                       )}
                       <button
                         type="button"
                         onClick={() => setDeleteImageIndex(index)}
-                        className="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 bg-danger hover:bg-danger-hover text-gray-50 p-1 sm:p-1.5 rounded-lg transition-colors cursor-pointer z-10"
+                        className="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 bg-danger hover:bg-danger-hover text-text-white p-1 sm:p-1.5 rounded-lg transition-colors cursor-pointer z-10"
                       >
                         <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -661,8 +654,7 @@ export default function NewPropertyPage() {
                         <button
                           type="button"
                           onClick={() => setCoverImage(index)}
-                          style={{ backgroundColor: '#3b82f6' }}
-                          className="absolute bottom-1.5 sm:bottom-2 left-1/2 -translate-x-1/2 text-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-blue-400 hover:bg-blue-600 transition-all text-[10px] sm:text-xs font-medium shadow-lg cursor-pointer"
+                          className="absolute bottom-1.5 sm:bottom-2 left-1/2 -translate-x-1/2 bg-primary hover:bg-primary-hover text-text-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg transition-all text-[10px] sm:text-xs font-medium shadow-lg cursor-pointer"
                         >
                           Kapak Yap
                         </button>
@@ -673,7 +665,6 @@ export default function NewPropertyPage() {
               )}
             </div>
 
-            {/* Submit */}
             <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 sm:gap-4 pt-4 sm:pt-6 border-t border-border">
               <Link href="/admin/properties">
                 <Button variant="cancel" type="button">İptal</Button>
@@ -685,7 +676,6 @@ export default function NewPropertyPage() {
           </form>
         </div>
 
-      {/* Görsel Silme Onay Dialogu */}
       <ConfirmModal
         isOpen={deleteImageIndex !== null}
         title="Görseli Sil"

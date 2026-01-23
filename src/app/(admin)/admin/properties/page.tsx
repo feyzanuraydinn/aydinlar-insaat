@@ -8,14 +8,23 @@ import { PROPERTY_TYPE_MAIN_OPTIONS } from "@/data/property-labels"
 import { useApi } from "@/hooks/useApi"
 import Pagination from "@/components/ui/Pagination"
 import { AdminListPageSkeleton } from "@/components/ui/Skeleton"
+import SortDropdown from "@/components/ui/SortDropdown"
 
 const ITEMS_PER_PAGE = 9
+
+type SortOrder = 'newest' | 'oldest'
+
+const SORT_OPTIONS = [
+  { value: 'newest', label: 'Yeniden Eskiye' },
+  { value: 'oldest', label: 'Eskiden Yeniye' },
+]
 
 export default function PropertiesPage() {
   const toast = useToast()
   const [properties, setProperties] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
+  const [sortOrder, setSortOrder] = useState<SortOrder>('newest')
   const api = useApi()
 
   const fetchProperties = useCallback(async () => {
@@ -35,7 +44,6 @@ export default function PropertiesPage() {
     fetchProperties()
   }, [])
 
-  // Öne çıkarılan gayrimenkul sayısı ve kullanılan sıralar
   const { featuredCount, usedOrders } = useMemo(() => {
     const featured = properties.filter(p => p.featured)
     return {
@@ -44,38 +52,33 @@ export default function PropertiesPage() {
     }
   }, [properties])
 
-  // Gayrimenkulleri sırala: önce öne çıkarılanlar (featuredOrder'a göre), sonra diğerleri (createdAt'e göre)
   const sortedProperties = useMemo(() => {
     return [...properties].sort((a, b) => {
-      // Her ikisi de öne çıkarılmış
       if (a.featured && b.featured) {
         return (a.featuredOrder || 999) - (b.featuredOrder || 999)
       }
-      // Sadece a öne çıkarılmış
       if (a.featured) return -1
-      // Sadece b öne çıkarılmış
       if (b.featured) return 1
-      // Hiçbiri öne çıkarılmamış - createdAt'e göre (yeniden eskiye)
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      if (sortOrder === 'newest') {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      } else {
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      }
     })
-  }, [properties])
+  }, [properties, sortOrder])
 
-  // Pagination hesaplamaları
   const totalPages = Math.ceil(sortedProperties.length / ITEMS_PER_PAGE)
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
   const paginatedProperties = sortedProperties.slice(startIndex, startIndex + ITEMS_PER_PAGE)
 
   const toggleFeatured = async (propertyId: string, currentFeatured: boolean, currentOrder: number | null) => {
-    // Optimistic update - önce UI'ı güncelle
     const newFeatured = !currentFeatured
 
-    // Eğer öne çıkarılacaksa ve zaten 3 tane varsa, işlemi engelle
     if (newFeatured && featuredCount >= 3) {
       toast.error('En fazla 3 gayrimenkul öne çıkarılabilir')
       return
     }
 
-    // Yeni sıra hesapla
     let newOrder: number | null = null
     if (newFeatured) {
       for (let i = 1; i <= 3; i++) {
@@ -86,7 +89,6 @@ export default function PropertiesPage() {
       }
     }
 
-    // Optimistic update
     setProperties(prev => prev.map(p =>
       p.id === propertyId
         ? { ...p, featured: newFeatured, featuredOrder: newOrder }
@@ -99,39 +101,32 @@ export default function PropertiesPage() {
       })
 
       if (data) {
-        // API'den gelen tüm gayrimenkulleri güncelle (swap/shift işlemleri dahil)
         if (data.allProperties) {
           setProperties(data.allProperties)
         }
         toast.success(newFeatured ? 'Gayrimenkul öne çıkarıldı' : 'Öne çıkarma kaldırıldı')
       } else {
-        // Hata durumunda geri al
         fetchProperties()
         toast.error('Öne çıkarma durumu güncellenemedi')
       }
     } catch (error) {
       console.error("Öne çıkan durumu güncellenemedi:", error)
-      // Hata durumunda geri al
       fetchProperties()
       toast.error('Bir hata oluştu')
     }
   }
 
   const updateFeaturedOrder = async (propertyId: string, order: number) => {
-    // Mevcut gayrimenkulü bul
     const currentProperty = properties.find(p => p.id === propertyId)
     const oldOrder = currentProperty?.featuredOrder
 
-    // Optimistic update
     setProperties(prev => {
-      // Hedef sırada başka bir gayrimenkul var mı?
       const targetProperty = prev.find(p => p.featured && p.featuredOrder === order && p.id !== propertyId)
 
       return prev.map(p => {
         if (p.id === propertyId) {
           return { ...p, featuredOrder: order }
         }
-        // Swap: hedef sıradaki gayrimenkule eski sırayı ver
         if (targetProperty && p.id === targetProperty.id) {
           return { ...p, featuredOrder: oldOrder }
         }
@@ -145,19 +140,16 @@ export default function PropertiesPage() {
       })
 
       if (data) {
-        // API'den gelen tüm gayrimenkulleri güncelle (swap işlemleri dahil)
         if (data.allProperties) {
           setProperties(data.allProperties)
         }
         toast.success(`Sıra ${order} olarak güncellendi`)
       } else {
-        // Hata durumunda geri al
         fetchProperties()
         toast.error('Sıra güncellenemedi')
       }
     } catch (error) {
       console.error("Sıra güncellenemedi:", error)
-      // Hata durumunda geri al
       fetchProperties()
       toast.error('Bir hata oluştu')
     }
@@ -166,13 +158,11 @@ export default function PropertiesPage() {
   const togglePublished = async (propertyId: string, currentPublished: boolean) => {
     const newPublished = !currentPublished
 
-    // Optimistic update
     setProperties(prev => prev.map(p =>
       p.id === propertyId
         ? {
             ...p,
             publishedAt: newPublished ? new Date().toISOString() : null,
-            // Yayından kaldırılıyorsa öne çıkarma bilgisini de temizle
             ...(currentPublished && { featured: false, featuredOrder: null })
           }
         : p
@@ -181,24 +171,20 @@ export default function PropertiesPage() {
     try {
       const data = await api.patch<{ allProperties?: any[] }>(`/api/admin/properties/${propertyId}`, {
         publishedAt: newPublished ? new Date().toISOString() : null,
-        // Yayından kaldırılıyorsa öne çıkarma bilgisini de temizle
         ...(currentPublished && { featured: false, featuredOrder: null })
       })
 
       if (data) {
-        // API'den gelen tüm gayrimenkulleri güncelle
         if (data.allProperties) {
           setProperties(data.allProperties)
         }
         toast.success(newPublished ? 'Yayınlandı' : 'Yayından kaldırıldı')
       } else {
-        // Hata durumunda geri al
         fetchProperties()
         toast.error('Yayınlama durumu güncellenemedi')
       }
     } catch (error) {
       console.error("Yayınlama durumu güncellenemedi:", error)
-      // Hata durumunda geri al
       fetchProperties()
       toast.error('Bir hata oluştu')
     }
@@ -221,9 +207,20 @@ export default function PropertiesPage() {
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-text-heading">Gayrimenkuller</h1>
           <p className="text-text-secondary mt-1 sm:mt-2 text-sm sm:text-base">Aktif gayrimenkullerinizi buradan yönetin</p>
         </div>
-        <Button variant="add" href="/admin/properties/new">
-          Yeni Gayrimenkul Ekle
-        </Button>
+        <div className="flex items-center gap-3">
+          <SortDropdown
+            options={SORT_OPTIONS}
+            value={sortOrder}
+            onChange={(value) => {
+              setSortOrder(value as SortOrder)
+              setCurrentPage(1)
+            }}
+            variant="admin"
+          />
+          <Button variant="add" href="/admin/properties/new">
+            Yeni Gayrimenkul Ekle
+          </Button>
+        </div>
       </div>
 
       {sortedProperties.length === 0 ? (

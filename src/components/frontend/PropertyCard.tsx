@@ -8,7 +8,6 @@ interface PropertyCardProps {
   property: Property;
 }
 
-// Label çevirileri
 const typeLabels: Record<string, string> = {
   RESIDENTIAL: "Konut",
   COMMERCIAL: "Ticari",
@@ -52,7 +51,6 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
   const fallbackImage = 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=500';
 
-  // Image URL'ini al - hem string hem de object formatını destekle
   const getImageUrl = () => {
     if (!property.images || property.images.length === 0) return fallbackImage;
     const firstImage = property.images[0];
@@ -62,36 +60,30 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
   const imageUrl = getImageUrl();
 
-  // Detay bilgilerini al
   const residentialDetails = property.residentialDetails;
   const commercialDetails = property.commercialDetails;
   const landDetails = property.landDetails;
 
-  // Fiyat formatlama
   const formatPrice = (price: number | null | undefined) => {
     if (!price) return null;
     return new Intl.NumberFormat('tr-TR').format(price) + ' TL';
   };
 
-  // Alan formatlama
   const formatArea = (area: number | null | undefined) => {
     if (!area) return null;
     return new Intl.NumberFormat('tr-TR').format(area) + ' m²';
   };
 
-  // Kategori etiketi
   const getCategoryLabel = () => {
     return typeLabels[property.type] || property.type;
   };
 
-  // Emlak tipi etiketi (Satılık/Kiralık)
   const getPropertyTypeLabel = () => {
     const details = residentialDetails || commercialDetails || landDetails;
     if (!details?.propertyType) return null;
     return propertyTypeLabels[details.propertyType] || details.propertyType;
   };
 
-  // Fiyat al
   const getPrice = () => {
     if (residentialDetails?.price) return formatPrice(residentialDetails.price);
     if (commercialDetails?.price) return formatPrice(commercialDetails.price);
@@ -99,7 +91,6 @@ export default function PropertyCard({ property }: PropertyCardProps) {
     return null;
   };
 
-  // Alan al
   const getArea = () => {
     if (residentialDetails?.grossArea) return formatArea(residentialDetails.grossArea);
     if (commercialDetails?.area) return formatArea(commercialDetails.area);
@@ -107,21 +98,18 @@ export default function PropertyCard({ property }: PropertyCardProps) {
     return null;
   };
 
-  // Bina yaşı al
   const getBuildingAge = () => {
     const age = residentialDetails?.buildingAge || commercialDetails?.buildingAge;
     if (!age) return null;
     return buildingAgeLabels[age] || age;
   };
 
-  // Kimden al
   const getListedBy = () => {
     const listedBy = residentialDetails?.listedBy || commercialDetails?.listedBy || landDetails?.listedBy;
     if (!listedBy) return null;
     return listedByLabels[listedBy] || listedBy;
   };
 
-  // Takas durumu
   const getExchange = () => {
     const exchange = residentialDetails?.exchange || commercialDetails?.exchange || landDetails?.exchange;
     return exchange === 'YES';
@@ -145,7 +133,6 @@ export default function PropertyCard({ property }: PropertyCardProps) {
       onClick={handleCardClick}
     >
       <div className={`[transform-style:preserve-3d] [-webkit-transform-style:preserve-3d] [-ms-transform-style:preserve-3d] [perspective:1000px] [-webkit-perspective:1000px] w-full h-full relative group ${isFlipped ? '[&>*:first-child]:[transform:rotateY(-180deg)] [&>*:first-child]:[-webkit-transform:rotateY(-180deg)] [&>*:last-child]:[transform:rotateY(0deg)] [&>*:last-child]:[-webkit-transform:rotateY(0deg)]' : ''}`}>
-        {/* Front Face */}
         <div
           className="bg-cover bg-center bg-no-repeat rounded-xl [transition:transform_0.7s_cubic-bezier(0.4,0.2,0.2,1)] [-webkit-transition:transform_0.7s_cubic-bezier(0.4,0.2,0.2,1)] [-ms-transition:transform_0.7s_cubic-bezier(0.4,0.2,0.2,1)] [-webkit-backface-visibility:hidden] [backface-visibility:hidden] absolute top-0 left-0 w-full h-full shadow-[0_10px_30px_-5px_rgba(0,0,0,0.3)] [transform:rotateY(0deg)] [-webkit-transform:rotateY(0deg)] [-ms-transform:rotateY(0deg)] [transform-style:preserve-3d] [-webkit-transform-style:preserve-3d] [-ms-transform-style:preserve-3d] flex items-center justify-center group-hover:[transform:rotateY(-180deg)] group-hover:[-webkit-transform:rotateY(-180deg)] group-hover:[-ms-transform:rotateY(-180deg)]"
           style={{
@@ -172,7 +159,6 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           </div>
         </div>
 
-        {/* Back Face */}
         <div
           className="bg-cover bg-center bg-no-repeat rounded-xl [transition:transform_0.7s_cubic-bezier(0.4,0.2,0.2,1)] [-webkit-transition:transform_0.7s_cubic-bezier(0.4,0.2,0.2,1)] [-ms-transition:transform_0.7s_cubic-bezier(0.4,0.2,0.2,1)] [-webkit-backface-visibility:hidden] [backface-visibility:hidden] absolute top-0 left-0 w-full h-full shadow-[0_10px_30px_-5px_rgba(0,0,0,0.3)] [transform:rotateY(180deg)] [-webkit-transform:rotateY(180deg)] [-ms-transform:rotateY(180deg)] [transform-style:preserve-3d] [-webkit-transform-style:preserve-3d] [-ms-transform-style:preserve-3d] flex items-center justify-center bg-primary-dark group-hover:[transform:rotateY(0deg)] group-hover:[-webkit-transform:rotateY(0deg)] group-hover:[-ms-transform:rotateY(0deg)]"
           style={{
@@ -188,7 +174,6 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                 {property.location}
               </p>
 
-              {/* All Details in Same Style */}
               <div className="grid grid-cols-2 gap-1 sm:gap-1.5 my-2 sm:my-3">
               {price && (
                 <div className="flex justify-between items-center py-0.5 sm:py-1 px-1.5 sm:px-2 border-b border-white/30">

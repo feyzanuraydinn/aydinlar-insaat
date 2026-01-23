@@ -14,7 +14,6 @@ import ConfirmModal from "@/components/admin/ConfirmModal"
 import { useApi } from "@/hooks/useApi"
 import { FormSkeleton } from "@/components/ui/Skeleton"
 
-// Leaflet'i sadece istemci tarafında yükle
 const LocationPicker = dynamic(() => import("@/components/admin/LocationPicker"), {
   ssr: false,
   loading: () => (
@@ -117,7 +116,6 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
         setLandData(property.landDetails)
       }
 
-      // Mevcut görselleri yükle
       if (property.images) {
         setImages(property.images.map((img: any) => ({
           id: img.id,
@@ -173,7 +171,6 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
   const confirmDeleteImage = async () => {
     if (deleteImageIndex === null || deletingImage) return
 
-    // Store the index locally to avoid state changes during async operation
     const indexToDelete = deleteImageIndex
     const imageToRemove = images[indexToDelete]
 
@@ -184,7 +181,6 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
 
     setDeletingImage(true)
 
-    // Delete from Cloudinary if it has a publicId
     if (imageToRemove.publicId) {
       try {
         const result = await api.request("/api/admin/upload", {
@@ -208,7 +204,6 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
 
     setImages(prev => {
       const newImages = prev.filter((_, i) => i !== indexToDelete)
-      // If deleted image was cover and there are remaining images, set first as cover
       if (prev[indexToDelete]?.isCover && newImages.length > 0) {
         newImages[0].isCover = true
       }
@@ -262,8 +257,6 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
       const uploadedImages = await uploadNewImages()
       setUploadingImages(false)
 
-      // Mevcut ve yeni görselleri birleştir
-      // id ve propertyId alanlarını çıkarıyoruz çünkü bunlar create işleminde kullanılmamalı
       const allImages = [
         ...images.filter(img => !img.file).map((img, idx) => ({
           url: img.url!,
@@ -289,7 +282,6 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
         metaDescription: formData.metaDescription || formData.description.substring(0, 160),
       }
 
-      // Tip-spesifik detaylardan id ve propertyId alanlarını çıkar
       const cleanResidentialData = residentialData ? Object.fromEntries(
         Object.entries(residentialData).filter(([key]) => key !== 'id' && key !== 'propertyId')
       ) : undefined
@@ -365,7 +357,6 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
               </div>
             )}
 
-            {/* Temel Bilgiler */}
             <div className="space-y-4 sm:space-y-6">
               <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-text-heading border-b border-border pb-2">Temel Bilgiler</h2>
 
@@ -420,7 +411,6 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
               </div>
             </div>
 
-            {/* Konut Detayları */}
             {formData.type === "RESIDENTIAL" && (
               <div className="space-y-4 sm:space-y-6 border-t border-border pt-6 sm:pt-8">
                 <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-text-heading border-b border-border pb-2">Konut Detayları</h2>
@@ -561,7 +551,6 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
               </div>
             )}
 
-            {/* Ticari Detayları */}
             {formData.type === "COMMERCIAL" && (
               <div className="space-y-4 sm:space-y-6 border-t border-border pt-6 sm:pt-8">
                 <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-text-heading border-b border-border pb-2">Ticari Gayrimenkul Detayları</h2>
@@ -630,7 +619,6 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
               </div>
             )}
 
-            {/* Arsa Detayları */}
             {formData.type === "LAND" && (
               <div className="space-y-4 sm:space-y-6 border-t border-border pt-6 sm:pt-8">
                 <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-text-heading border-b border-border pb-2">Arsa Detayları</h2>
@@ -719,7 +707,6 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
               </div>
             )}
 
-            {/* Görseller */}
             <div className="space-y-4 sm:space-y-6 border-t border-border pt-6 sm:pt-8">
               <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-text-heading border-b border-border pb-2">Gayrimenkul Görselleri</h2>
 
@@ -734,14 +721,14 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
                     <div key={image.id || image.url || image.preview} className="relative group">
                       <img src={image.preview} alt={`Görsel ${index + 1}`} className="w-full h-24 sm:h-28 lg:h-32 object-cover rounded-lg" />
                       {image.isCover && (
-                        <div className="absolute top-1.5 sm:top-2 left-1.5 sm:left-2 bg-blue-500 text-gray-50 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-semibold">
+                        <div className="absolute top-1.5 sm:top-2 left-1.5 sm:left-2 bg-success text-text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-semibold">
                           Kapak
                         </div>
                       )}
                       <button
                         type="button"
                         onClick={() => setDeleteImageIndex(index)}
-                        className="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 bg-danger hover:bg-danger-hover text-gray-50 p-1 sm:p-1.5 rounded-lg transition-colors cursor-pointer z-10"
+                        className="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 bg-danger hover:bg-danger-hover text-text-white p-1 sm:p-1.5 rounded-lg transition-colors cursor-pointer z-10"
                       >
                         <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -751,8 +738,7 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
                         <button
                           type="button"
                           onClick={() => setCoverImage(index)}
-                          style={{ backgroundColor: '#3b82f6' }}
-                          className="absolute bottom-1.5 sm:bottom-2 left-1/2 -translate-x-1/2 text-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-blue-400 hover:bg-blue-600 transition-all text-[10px] sm:text-xs font-medium shadow-lg cursor-pointer"
+                          className="absolute bottom-1.5 sm:bottom-2 left-1/2 -translate-x-1/2 bg-primary hover:bg-primary-hover text-text-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg transition-all text-[10px] sm:text-xs font-medium shadow-lg cursor-pointer"
                         >
                           Kapak Yap
                         </button>
@@ -763,7 +749,6 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
               )}
             </div>
 
-            {/* Submit */}
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 pt-4 sm:pt-6 border-t border-border">
               <Button type="button" variant="delete" onClick={() => setShowDeletePropertyDialog(true)} disabled={deleting} className="order-2 sm:order-1">
                 {deleting ? "Siliniyor..." : "Gayrimenkulu Sil"}
@@ -780,7 +765,6 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
           </form>
         </div>
 
-      {/* Görsel Silme Onay Dialogu */}
       <ConfirmModal
         isOpen={deleteImageIndex !== null}
         title="Görseli Sil"
@@ -792,7 +776,6 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
         isLoading={deletingImage}
       />
 
-      {/* Gayrimenkul Silme Onay Dialogu */}
       <ConfirmModal
         isOpen={showDeletePropertyDialog}
         title="Gayrimenkulu Sil"

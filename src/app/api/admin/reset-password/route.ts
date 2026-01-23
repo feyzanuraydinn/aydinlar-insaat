@@ -2,7 +2,6 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 
-// Token geçerliliğini kontrol et
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
@@ -41,7 +40,6 @@ export async function GET(request: Request) {
   }
 }
 
-// Şifreyi güncelle
 export async function POST(request: Request) {
   try {
     const { token, password } = await request.json()
@@ -60,7 +58,6 @@ export async function POST(request: Request) {
       )
     }
 
-    // Token'ı ve geçerliliğini kontrol et
     const user = await prisma.user.findFirst({
       where: {
         resetToken: token,
@@ -77,7 +74,6 @@ export async function POST(request: Request) {
       )
     }
 
-    // Şifreyi hashle ve güncelle
     const hashedPassword = await bcrypt.hash(password, 12)
 
     await prisma.user.update({

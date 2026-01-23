@@ -42,9 +42,7 @@ export default function ForgotPasswordPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface px-4 py-8 sm:py-12">
       <div className="max-w-md w-full space-y-6 sm:space-y-8">
-        {/* Form Card */}
         <div className="rounded-xl sm:rounded-2xl shadow-2xl p-6 sm:p-8 bg-hero">
-          {/* Logo */}
           <div className="text-center mb-6 sm:mb-8">
             <div className="flex items-center justify-center">
               <svg className="h-12 w-12 sm:h-16 sm:w-16 text-text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
@@ -113,7 +111,6 @@ export default function ForgotPasswordPage() {
           )}
         </div>
 
-        {/* Footer */}
         <p className="text-center text-xs sm:text-sm text-text-tertiary">
           © 2024 Aydınlar İnşaat. Tüm hakları saklıdır.
         </p>

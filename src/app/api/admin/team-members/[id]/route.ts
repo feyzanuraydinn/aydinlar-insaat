@@ -3,7 +3,6 @@ import { prisma } from '@/lib/prisma'
 import { requireAuth } from '@/lib/session'
 import { deleteFromCloudinary } from '@/lib/cloudinary'
 
-// GET - Get single team member
 export async function GET(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -33,7 +32,6 @@ export async function GET(
   }
 }
 
-// PUT - Update team member
 export async function PUT(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -43,7 +41,6 @@ export async function PUT(
     const { id } = await context.params
     const { name, profession, phone, email, websiteUrl, image, publicId, order } = await req.json()
 
-    // Check if record exists
     const existingMember = await prisma.contactCard.findUnique({
       where: { id }
     })
@@ -55,7 +52,6 @@ export async function PUT(
       )
     }
 
-    // Delete old image from Cloudinary if image changed
     if (existingMember.publicId && existingMember.image !== image) {
       await deleteFromCloudinary(existingMember.publicId)
     }
@@ -84,7 +80,6 @@ export async function PUT(
   }
 }
 
-// DELETE - Delete team member
 export async function DELETE(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -93,7 +88,6 @@ export async function DELETE(
     await requireAuth()
     const { id } = await context.params
 
-    // Get member first to get publicId
     const existingMember = await prisma.contactCard.findUnique({
       where: { id }
     })
@@ -105,7 +99,6 @@ export async function DELETE(
       )
     }
 
-    // Delete image from Cloudinary
     if (existingMember.publicId) {
       await deleteFromCloudinary(existingMember.publicId)
     }

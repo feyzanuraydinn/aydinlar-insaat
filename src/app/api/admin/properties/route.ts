@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireAuth } from '@/lib/session'
+import { generateSlug } from '@/lib/utils'
 
-// GET - Tüm gayrimenkulleri listele (admin)
 export async function GET(req: NextRequest) {
   try {
     await requireAuth()
@@ -10,7 +10,10 @@ export async function GET(req: NextRequest) {
     const properties = await prisma.property.findMany({
       include: {
         images: {
-          orderBy: { order: 'asc' }
+          orderBy: [
+            { isCover: 'desc' },
+            { order: 'asc' }
+          ]
         },
         residentialDetails: true,
         commercialDetails: true,
@@ -29,7 +32,6 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST - Yeni gayrimenkul oluştur
 export async function POST(req: NextRequest) {
   try {
     await requireAuth()
@@ -53,19 +55,8 @@ export async function POST(req: NextRequest) {
       landDetails,
     } = data
 
-    // Slug oluştur
-    let baseSlug = customSlug || title
-      .toLowerCase()
-      .replace(/ğ/g, 'g')
-      .replace(/ü/g, 'u')
-      .replace(/ş/g, 's')
-      .replace(/ı/g, 'i')
-      .replace(/ö/g, 'o')
-      .replace(/ç/g, 'c')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '')
+    let baseSlug = customSlug || generateSlug(title)
 
-    // Slug benzersiz mi kontrol et, değilse numara ekle
     let slug = baseSlug
     let counter = 1
     while (await prisma.property.findUnique({ where: { slug } })) {
@@ -73,7 +64,6 @@ export async function POST(req: NextRequest) {
       counter++
     }
 
-    // Gayrimenkul tipine göre oluştur
     const propertyData: any = {
       title,
       location,
@@ -98,7 +88,6 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Tip bazlı detayları ekle
     if (type === "RESIDENTIAL" && residentialDetails) {
       propertyData.residentialDetails = {
         create: residentialDetails
@@ -127,7 +116,6 @@ export async function POST(req: NextRequest) {
   } catch (error: any) {
     console.error('Create property error:', error)
 
-    // Prisma validation hatalarını yakala
     if (error.code === 'P2002') {
       return NextResponse.json(
         { error: 'Bu slug zaten kullanılıyor', field: error.meta?.target },

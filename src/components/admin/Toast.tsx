@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react"
 
-// Toast Types
 interface ToastData {
   id: string
   type: "success" | "error" | "warning"
@@ -17,7 +16,6 @@ interface ToastContextType {
 
 const ToastContext = createContext<ToastContextType | null>(null)
 
-// Toast Item Component
 function ToastItem({
   type,
   message,
@@ -79,7 +77,6 @@ function ToastItem({
   )
 }
 
-// Toast Provider Component
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastData[]>([])
 
@@ -113,7 +110,6 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   )
 }
 
-// useToast Hook
 export function useToast() {
   const context = useContext(ToastContext)
   if (!context) {

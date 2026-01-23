@@ -16,7 +16,6 @@ export interface PropertyImage {
   isCover: boolean;
 }
 
-// Residential Project Details
 export interface ResidentialProjectDetails {
   id: string;
   projectId: string;
@@ -44,7 +43,6 @@ export interface ResidentialProjectDetails {
   exchange?: string | null;
 }
 
-// Commercial Project Details
 export interface CommercialProjectDetails {
   id: string;
   projectId: string;
@@ -78,12 +76,10 @@ export interface Project {
   longitude?: number | null;
   metaTitle?: string | null;
   metaDescription?: string | null;
-  // Related details
   residentialDetails?: ResidentialProjectDetails | null;
   commercialDetails?: CommercialProjectDetails | null;
 }
 
-// Residential Property Details
 export interface ResidentialPropertyDetails {
   id: string;
   propertyId: string;
@@ -111,7 +107,6 @@ export interface ResidentialPropertyDetails {
   exchange?: string | null;
 }
 
-// Commercial Property Details
 export interface CommercialPropertyDetails {
   id: string;
   propertyId: string;
@@ -127,7 +122,6 @@ export interface CommercialPropertyDetails {
   exchange?: string | null;
 }
 
-// Land Property Details
 export interface LandPropertyDetails {
   id: string;
   propertyId: string;
@@ -163,7 +157,6 @@ export interface Property {
   longitude?: number | null;
   metaTitle?: string | null;
   metaDescription?: string | null;
-  // Related details
   residentialDetails?: ResidentialPropertyDetails | null;
   commercialDetails?: CommercialPropertyDetails | null;
   landDetails?: LandPropertyDetails | null;

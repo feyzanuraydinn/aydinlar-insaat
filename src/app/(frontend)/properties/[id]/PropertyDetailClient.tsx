@@ -6,7 +6,6 @@ import Button from "@/components/ui/Button";
 import Carousel from "@/components/frontend/Carousel";
 import { Property } from "@/types";
 
-// Label çevirileri
 const labels: Record<string, Record<string, string>> = {
   type: {
     RESIDENTIAL: "Konut",
@@ -175,13 +174,11 @@ interface PropertyDetailClientProps {
 export default function PropertyDetailClient({ initialProperty }: PropertyDetailClientProps) {
   const [property] = useState<Property | null>(initialProperty);
 
-  // Fiyat formatlama fonksiyonu
   const formatPrice = (price: number | null | undefined): string | null => {
     if (!price) return null;
     return new Intl.NumberFormat('tr-TR').format(price) + ' TL';
   };
 
-  // Alan formatlama fonksiyonu
   const formatArea = (area: number | null | undefined): string | null => {
     if (!area) return null;
     return new Intl.NumberFormat('tr-TR').format(area) + ' m²';
@@ -200,23 +197,18 @@ export default function PropertyDetailClient({ initialProperty }: PropertyDetail
     );
   }
 
-  // Harita koordinatları var mı?
   const hasLocation = property.latitude && property.longitude;
 
-  // Detay bilgilerini al (residential, commercial veya land)
   const residentialDetails = property.residentialDetails;
   const commercialDetails = property.commercialDetails;
   const landDetails = property.landDetails;
 
-  // Tip belirle
   const isResidential = property.type === 'RESIDENTIAL';
   const isCommercial = property.type === 'COMMERCIAL';
   const isLand = property.type === 'LAND';
 
-  // Özellik listesi oluştur
   const specs: { label: string; value: string | null }[] = [];
 
-  // Kategori
   const typeLabel = getLabel('type', property.type);
   if (typeLabel) {
     specs.push({ label: 'Kategori', value: typeLabel });
@@ -225,129 +217,107 @@ export default function PropertyDetailClient({ initialProperty }: PropertyDetail
   if (isResidential && residentialDetails) {
     const rd = residentialDetails;
 
-    // Emlak Tipi
     const propertyType = getLabel('propertyType', rd.propertyType);
     if (propertyType) {
       specs.push({ label: 'Emlak Tipi', value: propertyType });
     }
 
-    // Fiyat
     const price = formatPrice(rd.price);
     if (price) {
       specs.push({ label: 'Fiyat', value: price });
     }
 
-    // m² (Brüt)
     const grossArea = formatArea(rd.grossArea);
     if (grossArea) {
       specs.push({ label: 'm² (Brüt)', value: grossArea });
     }
 
-    // m² (Net)
     const netArea = formatArea(rd.netArea);
     if (netArea) {
       specs.push({ label: 'm² (Net)', value: netArea });
     }
 
-    // Oda Sayısı
     if (rd.roomCount) {
       specs.push({ label: 'Oda Sayısı', value: rd.roomCount });
     }
 
-    // Konut Tipi
     const housingType = getLabel('housingType', rd.housingType);
     if (housingType) {
       specs.push({ label: 'Konut Tipi', value: housingType });
     }
 
-    // Bina Yaşı
     const buildingAge = getLabel('buildingAge', rd.buildingAge);
     if (buildingAge) {
       specs.push({ label: 'Bina Yaşı', value: buildingAge });
     }
 
-    // Bulunduğu Kat
     if (rd.currentFloor) {
       specs.push({ label: 'Bulunduğu Kat', value: rd.currentFloor });
     }
 
-    // Kat Sayısı
     if (rd.totalFloors) {
       specs.push({ label: 'Kat Sayısı', value: rd.totalFloors });
     }
 
-    // Isıtma
     const heating = getLabel('heating', rd.heating);
     if (heating) {
       specs.push({ label: 'Isıtma', value: heating });
     }
 
-    // Banyo Sayısı
     if (rd.bathroomCount && rd.bathroomCount !== 'NONE') {
       specs.push({ label: 'Banyo Sayısı', value: rd.bathroomCount });
     }
 
-    // Mutfak
     const kitchen = getLabel('kitchen', rd.kitchen);
     if (kitchen) {
       specs.push({ label: 'Mutfak', value: kitchen });
     }
 
-    // Balkon
     const balcony = getLabel('yesNo', rd.balcony);
     if (balcony) {
       specs.push({ label: 'Balkon', value: balcony });
     }
 
-    // Asansör
     const elevator = getLabel('yesNo', rd.elevator);
     if (elevator) {
       specs.push({ label: 'Asansör', value: elevator });
     }
 
-    // Otopark
     const parking = getLabel('parking', rd.parking);
     if (parking) {
       specs.push({ label: 'Otopark', value: parking });
     }
 
-    // Eşyalı
     const furnished = getLabel('yesNo', rd.furnished);
     if (furnished) {
       specs.push({ label: 'Eşyalı', value: furnished });
     }
 
-    // Kullanım Durumu
     const usageStatus = getLabel('usageStatus', rd.usageStatus);
     if (usageStatus) {
       specs.push({ label: 'Kullanım Durumu', value: usageStatus });
     }
 
-    // Site İçerisinde
     const inComplex = getLabel('yesNo', rd.inComplex);
     if (inComplex) {
       specs.push({ label: 'Site İçerisinde', value: inComplex });
     }
 
-    // Krediye Uygunluk
     const mortgageEligible = getLabel('yesNo', rd.mortgageEligible);
     if (mortgageEligible) {
       specs.push({ label: 'Krediye Uygun', value: mortgageEligible });
     }
 
-    // Tapu Durumu
     const deedStatus = getLabel('deedStatus', rd.deedStatus);
     if (deedStatus) {
       specs.push({ label: 'Tapu Durumu', value: deedStatus });
     }
 
-    // Kimden
     const listedBy = getLabel('listedBy', rd.listedBy);
     if (listedBy) {
       specs.push({ label: 'Kimden', value: listedBy });
     }
 
-    // Takas
     const exchange = getLabel('yesNo', rd.exchange);
     if (exchange) {
       specs.push({ label: 'Takas', value: exchange });
@@ -355,60 +325,50 @@ export default function PropertyDetailClient({ initialProperty }: PropertyDetail
   } else if (isCommercial && commercialDetails) {
     const cd = commercialDetails;
 
-    // Emlak Tipi
     const propertyType = getLabel('propertyType', cd.propertyType);
     if (propertyType) {
       specs.push({ label: 'Emlak Tipi', value: propertyType });
     }
 
-    // Fiyat
     const price = formatPrice(cd.price);
     if (price) {
       specs.push({ label: 'Fiyat', value: price });
     }
 
-    // Ticari Tür
     const commercialType = getLabel('commercialType', cd.commercialType);
     if (commercialType) {
       specs.push({ label: 'Tür', value: commercialType });
     }
 
-    // m²
     const area = formatArea(cd.area);
     if (area) {
       specs.push({ label: 'Alan', value: area });
     }
 
-    // Oda Sayısı
     if (cd.roomCount) {
       specs.push({ label: 'Bölüm/Oda Sayısı', value: cd.roomCount });
     }
 
-    // Isıtma
     const heating = getLabel('heating', cd.heating);
     if (heating) {
       specs.push({ label: 'Isıtma', value: heating });
     }
 
-    // Bina Yaşı
     const buildingAge = getLabel('buildingAge', cd.buildingAge);
     if (buildingAge) {
       specs.push({ label: 'Bina Yaşı', value: buildingAge });
     }
 
-    // Tapu Durumu
     const deedStatus = getLabel('deedStatus', cd.deedStatus);
     if (deedStatus) {
       specs.push({ label: 'Tapu Durumu', value: deedStatus });
     }
 
-    // Kimden
     const listedBy = getLabel('listedBy', cd.listedBy);
     if (listedBy) {
       specs.push({ label: 'Kimden', value: listedBy });
     }
 
-    // Takas
     const exchange = getLabel('yesNo', cd.exchange);
     if (exchange) {
       specs.push({ label: 'Takas', value: exchange });
@@ -416,88 +376,73 @@ export default function PropertyDetailClient({ initialProperty }: PropertyDetail
   } else if (isLand && landDetails) {
     const ld = landDetails;
 
-    // Emlak Tipi
     const propertyType = getLabel('propertyType', ld.propertyType);
     if (propertyType) {
       specs.push({ label: 'Emlak Tipi', value: propertyType });
     }
 
-    // İmar Durumu
     const zoningStatus = getLabel('zoningStatus', ld.zoningStatus);
     if (zoningStatus) {
       specs.push({ label: 'İmar Durumu', value: zoningStatus });
     }
 
-    // m²
     const area = formatArea(ld.area);
     if (area) {
       specs.push({ label: 'Alan', value: area });
     }
 
-    // m² Fiyatı
     const pricePerSqm = formatPrice(ld.pricePerSqm);
     if (pricePerSqm) {
       specs.push({ label: 'm² Fiyatı', value: pricePerSqm });
     }
 
-    // Ada No
     if (ld.islandNumber) {
       specs.push({ label: 'Ada No', value: ld.islandNumber.toString() });
     }
 
-    // Parsel No
     if (ld.parcelNumber) {
       specs.push({ label: 'Parsel No', value: ld.parcelNumber.toString() });
     }
 
-    // Pafta No
     if (ld.sheetNumber) {
       specs.push({ label: 'Pafta No', value: ld.sheetNumber.toString() });
     }
 
-    // Kaks (Emsal)
     if (ld.floorAreaRatio) {
       specs.push({ label: 'Kaks (Emsal)', value: ld.floorAreaRatio.toString() });
     }
 
-    // Gabari
     if (ld.heightLimit) {
       specs.push({ label: 'Gabari', value: ld.heightLimit + ' m' });
     }
 
-    // Krediye Uygunluk
     const mortgageEligible = getLabel('yesNo', ld.mortgageEligible);
     if (mortgageEligible) {
       specs.push({ label: 'Krediye Uygun', value: mortgageEligible });
     }
 
-    // Tapu Durumu
     const deedStatus = getLabel('deedStatus', ld.deedStatus);
     if (deedStatus) {
       specs.push({ label: 'Tapu Durumu', value: deedStatus });
     }
 
-    // Kimden
     const listedBy = getLabel('listedBy', ld.listedBy);
     if (listedBy) {
       specs.push({ label: 'Kimden', value: listedBy });
     }
 
-    // Takas
     const exchange = getLabel('yesNo', ld.exchange);
     if (exchange) {
       specs.push({ label: 'Takas', value: exchange });
     }
   }
 
-  // Lokasyon
   if (property.location) {
     specs.push({ label: 'Lokasyon', value: property.location });
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
       <section className="relative pt-20 pb-12 sm:pt-24 sm:pb-16 md:pt-28 md:pb-20 overflow-hidden bg-hero">
         <DotGridBackground />
 
@@ -515,11 +460,9 @@ export default function PropertyDetailClient({ initialProperty }: PropertyDetail
         </div>
       </section>
 
-      {/* Property Details Section */}
       <section className="py-12 sm:py-16 md:py-20 bg-white">
         <div className="container px-4 mx-auto">
           <div className="grid max-w-6xl grid-cols-1 gap-12 mx-auto lg:grid-cols-2">
-            {/* Image Carousel & Map - First on Mobile, Right on Desktop */}
             <div className="space-y-6 lg:order-2">
               {property.images && property.images.length > 0 && (
                 <Carousel
@@ -531,7 +474,6 @@ export default function PropertyDetailClient({ initialProperty }: PropertyDetail
                 />
               )}
 
-              {/* Harita - Konum varsa göster */}
               {hasLocation && (
                 <div className="p-4 sm:p-6 bg-gray-50 rounded-xl">
                   <h4 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-gray-800">Konum</h4>
@@ -553,7 +495,6 @@ export default function PropertyDetailClient({ initialProperty }: PropertyDetail
               )}
             </div>
 
-            {/* Property Details - Second on Mobile, Left on Desktop */}
             <div className="space-y-4 lg:order-1">
               {property.description && (
                 <div>
@@ -566,7 +507,6 @@ export default function PropertyDetailClient({ initialProperty }: PropertyDetail
                 </div>
               )}
 
-              {/* Property Specifications */}
               {specs.length > 0 && (
                 <div className="space-y-3">
                   <h3 className="text-lg sm:text-xl font-bold text-gray-800">Özellikler</h3>
@@ -591,7 +531,6 @@ export default function PropertyDetailClient({ initialProperty }: PropertyDetail
                 </div>
               )}
 
-              {/* Back to Properties Button */}
               <div className="pt-4">
                 <Button rounded={true} variant="link" href="/properties" showArrow={true}>
                   Tüm Gayrimenkulleri Gör

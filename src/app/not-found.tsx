@@ -4,7 +4,6 @@ export default function NotFound() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-lg w-full text-center">
-        {/* 404 Illustration */}
         <div className="mb-8">
           <div className="relative">
             <h1 className="text-[180px] font-bold text-gray-200 leading-none select-none">
@@ -28,7 +27,6 @@ export default function NotFound() {
           </div>
         </div>
 
-        {/* Content */}
         <h2 className="text-3xl font-bold text-gray-800 mb-4">
           Sayfa Bulunamadı
         </h2>
@@ -36,7 +34,6 @@ export default function NotFound() {
           Aradığınız sayfa taşınmış, silinmiş veya hiç var olmamış olabilir.
         </p>
 
-        {/* Back Button */}
         <div className="flex justify-center">
           <Button variant="back" href="/">
             Ana Sayfaya Dön

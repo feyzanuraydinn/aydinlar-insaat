@@ -17,7 +17,6 @@ export default async function AdminDashboard() {
   const projectCount = await prisma.project.count()
   const propertyCount = await prisma.property.count()
 
-  // Count actual settings records
   const [
     homePageSettings,
     aboutPageSettings,

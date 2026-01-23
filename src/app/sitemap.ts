@@ -1,10 +1,11 @@
 import { MetadataRoute } from 'next'
 import { prisma } from '@/lib/prisma'
 
+export const dynamic = 'force-dynamic';
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://aydinlarinsaat.com'
 
-  // Statik sayfalar
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
@@ -38,7 +39,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
-  // Dinamik proje sayfaları
   let projectPages: MetadataRoute.Sitemap = []
   try {
     const projects = await prisma.project.findMany({
@@ -61,7 +61,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('Sitemap: Projeler alınamadı', error)
   }
 
-  // Dinamik gayrimenkul sayfaları
   let propertyPages: MetadataRoute.Sitemap = []
   try {
     const properties = await prisma.property.findMany({

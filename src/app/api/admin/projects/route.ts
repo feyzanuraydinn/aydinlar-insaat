@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireAuth } from '@/lib/session'
+import { generateSlug } from '@/lib/utils'
 
-// GET - Tüm projeleri listele (admin)
 export async function GET(req: NextRequest) {
   try {
     await requireAuth()
@@ -10,7 +10,10 @@ export async function GET(req: NextRequest) {
     const projects = await prisma.project.findMany({
       include: {
         images: {
-          orderBy: { order: 'asc' }
+          orderBy: [
+            { isCover: 'desc' },
+            { order: 'asc' }
+          ]
         },
         residentialDetails: true,
         commercialDetails: true,
@@ -28,7 +31,6 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST - Yeni proje oluştur
 export async function POST(req: NextRequest) {
   try {
     await requireAuth()
@@ -52,19 +54,8 @@ export async function POST(req: NextRequest) {
       commercialDetails,
     } = data
 
-    // Slug oluştur
-    let baseSlug = customSlug || title
-      .toLowerCase()
-      .replace(/ğ/g, 'g')
-      .replace(/ü/g, 'u')
-      .replace(/ş/g, 's')
-      .replace(/ı/g, 'i')
-      .replace(/ö/g, 'o')
-      .replace(/ç/g, 'c')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '')
+    let baseSlug = customSlug || generateSlug(title)
 
-    // Slug benzersiz mi kontrol et, değilse numara ekle
     let slug = baseSlug
     let counter = 1
     while (await prisma.project.findUnique({ where: { slug } })) {
@@ -72,7 +63,6 @@ export async function POST(req: NextRequest) {
       counter++
     }
 
-    // Proje tipine göre oluştur
     const projectData: any = {
       title,
       location,
@@ -98,7 +88,6 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Tip bazlı detayları ekle
     if (type === "RESIDENTIAL" && residentialDetails) {
       projectData.residentialDetails = {
         create: residentialDetails

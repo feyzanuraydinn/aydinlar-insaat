@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-// GET - Public hero kartlarını getir (auth gerekmez)
 export async function GET(req: NextRequest) {
   try {
     const heroCards = await prisma.heroCard.findMany({

@@ -22,7 +22,6 @@ export default function Pagination({
   const startItem = totalItems && itemsPerPage ? (currentPage - 1) * itemsPerPage + 1 : null
   const endItem = totalItems && itemsPerPage ? Math.min(currentPage * itemsPerPage, totalItems) : null
 
-  // Görüntülenecek sayfa numaralarını hesapla
   const getPageNumbers = () => {
     const pages: (number | string)[] = []
     const maxVisible = 5
@@ -52,7 +51,6 @@ export default function Pagination({
     return pages
   }
 
-  // Simple variant - frontend için
   if (variant === "simple") {
     return (
       <div className="flex justify-center items-center gap-2 mt-12">
@@ -99,19 +97,15 @@ export default function Pagination({
     )
   }
 
-  // Default variant - admin için
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
-      {/* Info */}
       {totalItems && itemsPerPage && (
         <p className="text-sm text-text-secondary">
           <span className="font-medium">{startItem}</span>-<span className="font-medium">{endItem}</span> / toplam <span className="font-medium">{totalItems}</span> kayıt
         </p>
       )}
 
-      {/* Pagination */}
       <div className="flex items-center gap-1">
-        {/* Previous */}
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
@@ -122,7 +116,6 @@ export default function Pagination({
           </svg>
         </button>
 
-        {/* Page Numbers */}
         {getPageNumbers().map((page, i) => (
           typeof page === "number" ? (
             <button
@@ -143,7 +136,6 @@ export default function Pagination({
           )
         ))}
 
-        {/* Next */}
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}

@@ -1,7 +1,5 @@
 import { z } from 'zod'
 
-// ==================== AUTH ====================
-
 export const loginSchema = z.object({
   email: z
     .string()
@@ -12,8 +10,6 @@ export const loginSchema = z.object({
     .min(1, 'Şifre gerekli')
     .min(6, 'Şifre en az 6 karakter olmalı'),
 })
-
-// ==================== PROJECTS ====================
 
 export const createProjectSchema = z.object({
   title: z
@@ -68,8 +64,6 @@ export const createProjectSchema = z.object({
 
 export const updateProjectSchema = createProjectSchema.partial()
 
-// ==================== PROPERTIES ====================
-
 export const createPropertySchema = z.object({
   title: z
     .string()
@@ -110,8 +104,6 @@ export const createPropertySchema = z.object({
 
 export const updatePropertySchema = createPropertySchema.partial()
 
-// ==================== HERO CARDS ====================
-
 export const createHeroCardSchema = z.object({
   image: z
     .string()
@@ -132,8 +124,6 @@ export const createHeroCardSchema = z.object({
 })
 
 export const updateHeroCardSchema = createHeroCardSchema.partial()
-
-// ==================== TEAM MEMBERS ====================
 
 export const createTeamMemberSchema = z.object({
   name: z
@@ -174,24 +164,19 @@ export const createTeamMemberSchema = z.object({
 
 export const updateTeamMemberSchema = createTeamMemberSchema.partial()
 
-// ==================== SETTINGS ====================
-
 export const updateSettingsSchema = z.object({
-  // Contact Info
   companyName: z.string().max(255).optional().nullable(),
   phone: z.string().max(50).optional().nullable(),
   email: z.string().email().optional().nullable(),
   address: z.string().max(500).optional().nullable(),
   workingHours: z.string().max(255).optional().nullable(),
 
-  // Social Media
   facebook: z.string().url().optional().nullable(),
   twitter: z.string().url().optional().nullable(),
   instagram: z.string().url().optional().nullable(),
   linkedin: z.string().url().optional().nullable(),
   youtube: z.string().url().optional().nullable(),
 
-  // Home Page
   heroTitle: z.string().max(255).optional().nullable(),
   heroSubtitle: z.string().max(255).optional().nullable(),
   heroDefinition: z.string().max(1000).optional().nullable(),
@@ -199,7 +184,6 @@ export const updateSettingsSchema = z.object({
   completedProjects: z.number().int().min(0).optional().nullable(),
   happyCustomers: z.number().int().min(0).optional().nullable(),
 
-  // About Page
   aboutTitle: z.string().max(255).optional().nullable(),
   aboutSubtitle: z.string().max(255).optional().nullable(),
   aboutDefinition: z.string().max(5000).optional().nullable(),
@@ -208,12 +192,6 @@ export const updateSettingsSchema = z.object({
   mission: z.string().max(2000).optional().nullable(),
 })
 
-// ==================== UTILITY ====================
-
-/**
- * Validate data against a schema
- * Returns { success: true, data } or { success: false, errors }
- */
 export function validateData<T>(
   schema: z.ZodSchema<T>,
   data: unknown
@@ -227,9 +205,6 @@ export function validateData<T>(
   return { success: false, errors: result.error.issues }
 }
 
-/**
- * Format Zod errors for API response
- */
 export function formatZodErrors(errors: z.ZodError['issues']): Record<string, string> {
   const formatted: Record<string, string> = {}
 
@@ -241,7 +216,6 @@ export function formatZodErrors(errors: z.ZodError['issues']): Record<string, st
   return formatted
 }
 
-// Type exports
 export type LoginInput = z.infer<typeof loginSchema>
 export type CreateProjectInput = z.infer<typeof createProjectSchema>
 export type UpdateProjectInput = z.infer<typeof updateProjectSchema>

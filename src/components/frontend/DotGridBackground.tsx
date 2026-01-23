@@ -39,7 +39,6 @@ function hexToRgb(hex: string) {
   };
 }
 
-// Sabit değerler
 const DOT_SIZE = 3;
 const GAP = 25;
 const BASE_COLOR = '#1e40af';
@@ -204,7 +203,8 @@ export default function DotGridBackground({
       pr.vy = vy;
       pr.speed = speed;
 
-      const rect = canvasRef.current!.getBoundingClientRect();
+      if (!canvasRef.current) return;
+      const rect = canvasRef.current.getBoundingClientRect();
       pr.x = e.clientX - rect.left;
       pr.y = e.clientY - rect.top;
 
@@ -232,7 +232,8 @@ export default function DotGridBackground({
     };
 
     const onClick = (e: MouseEvent) => {
-      const rect = canvasRef.current!.getBoundingClientRect();
+      if (!canvasRef.current) return;
+      const rect = canvasRef.current.getBoundingClientRect();
       const cx = e.clientX - rect.left;
       const cy = e.clientY - rect.top;
       for (const dot of dotsRef.current) {

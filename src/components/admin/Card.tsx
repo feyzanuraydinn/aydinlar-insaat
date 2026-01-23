@@ -26,20 +26,16 @@ export default function Card({
   const coverImage = item.images.find((img: any) => img.isCover) || item.images[0]
   const editPath = type === "project" ? `/admin/projects/${item.id}` : `/admin/properties/${item.id}`
 
-  // Sıra seçenekleri
   const orderOptions = [
     { value: 1, label: "1" },
     { value: 2, label: "2" },
     { value: 3, label: "3" },
   ]
 
-  // Öne çıkarma toggle'ı disable olmalı mı?
-  // Yayınlanmamışsa veya (henüz öne çıkarılmamış VE zaten 3 tane varsa)
   const isFeaturedToggleDisabled = !item.publishedAt || (!item.featured && featuredCount >= 3)
 
   return (
     <div className="transition-shadow rounded-lg shadow bg-surface hover:shadow-lg">
-      {/* Kapak Görseli */}
       <Link href={editPath} className="block overflow-hidden rounded-t-lg">
         <div className="relative h-36 sm:h-44 lg:h-48 bg-surface-hover">
           {coverImage ? (
@@ -52,20 +48,17 @@ export default function Card({
             </div>
           )}
 
-          {/* Öne Çıkan Badge */}
           {item.featured && (
             <div className="absolute px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs font-semibold bg-primary rounded top-2 right-2 text-text-white">
               Öne Çıkan #{item.featuredOrder}
             </div>
           )}
 
-          {/* Tip Badge */}
           <div className="absolute px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs font-semibold bg-primary rounded top-2 left-2 text-text-white">
             {typeLabel}
           </div>
         </div>
 
-        {/* İçerik */}
         <div className="p-3 sm:p-4 overflow-hidden">
           <h3 className="mb-1 text-sm sm:text-base lg:text-lg font-semibold text-text-primary transition-colors group-hover:text-primary line-clamp-1" title={item.title}>
             {item.title}
@@ -91,9 +84,7 @@ export default function Card({
         </div>
       </Link>
 
-      {/* Yönetim Butonları */}
       <div className="px-3 sm:px-4 pt-2.5 sm:pt-3 pb-3 sm:pb-4 space-y-2 border-t border-border rounded-b-lg">
-        {/* Yayınlama - İlk Satır */}
         <Toggle
           enabled={!!item.publishedAt}
           onChange={() => onTogglePublished(item.id, !!item.publishedAt)}
@@ -101,7 +92,6 @@ export default function Card({
           labelPosition="right"
         />
 
-        {/* Öne Çıkarma + Dropdown - İkinci Satır */}
         <div className="relative flex items-center gap-2">
           <Toggle
             enabled={item.featured}
@@ -119,7 +109,6 @@ export default function Card({
             labelPosition="right"
           />
 
-          {/* Sıra Dropdown - Öne çıkarma aktifse göster */}
           {item.featured && item.publishedAt && (
             <div className="relative z-20 w-14 sm:w-16 ml-auto">
               <Select

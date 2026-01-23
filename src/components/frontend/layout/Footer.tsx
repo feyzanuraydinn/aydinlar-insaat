@@ -4,9 +4,9 @@ interface FooterSettings {
   description?: string;
   phone?: string;
   email?: string;
-  address?: string;
   latitude?: number | null;
   longitude?: number | null;
+  locationAddress?: string | null;
 }
 
 interface FooterProps {
@@ -17,13 +17,14 @@ export default function Footer({ settings }: FooterProps) {
   const description = settings?.description || "Kaliteli inşaat hizmetleri ve güvenilir gayrimenkul çözümleri.";
   const phone = settings?.phone || "444 91 37";
   const email = settings?.email || "info@aydinlarinsaat.com";
-  const address = settings?.address || "Kocaeli, Türkiye";
   const latitude = settings?.latitude;
   const longitude = settings?.longitude;
+  const locationAddress = settings?.locationAddress;
 
-  const mapsUrl = latitude && longitude
+  const hasLocation = latitude && longitude;
+  const mapsUrl = hasLocation
     ? `https://www.google.com/maps?q=${latitude},${longitude}`
-    : `https://www.google.com/maps/search/${encodeURIComponent(address)}`;
+    : null;
 
   const currentYear = new Date().getFullYear();
 
@@ -99,19 +100,21 @@ export default function Footer({ settings }: FooterProps) {
                   <span className="break-all">{email}</span>
                 </a>
               </li>
-              <li>
-                <a
-                  href={mapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center transition-colors hover:text-primary-light"
-                >
-                  <svg className="flex-shrink-0 w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                  </svg>
-                  {address}
-                </a>
-              </li>
+              {hasLocation && mapsUrl && (
+                <li>
+                  <a
+                    href={mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center transition-colors hover:text-primary-light"
+                  >
+                    <svg className="flex-shrink-0 w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                    {locationAddress || "Konumu Görüntüle"}
+                  </a>
+                </li>
+              )}
             </ul>
           </div>
         </div>

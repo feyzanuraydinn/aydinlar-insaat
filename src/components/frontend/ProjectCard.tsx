@@ -8,7 +8,6 @@ interface ProjectCardProps {
   project: Project;
 }
 
-// Label çevirileri
 const typeLabels: Record<string, string> = {
   RESIDENTIAL: "Konut",
   COMMERCIAL: "Ticari",
@@ -27,7 +26,6 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
   const fallbackImage = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=500';
 
-  // Image URL'ini al - hem string hem de object formatını destekle
   const getImageUrl = () => {
     if (!project.images || project.images.length === 0) return fallbackImage;
     const firstImage = project.images[0];
@@ -37,27 +35,22 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
   const imageUrl = getImageUrl();
 
-  // Detay bilgilerini al
   const details = project.residentialDetails || project.commercialDetails;
 
-  // Fiyat formatlama
   const formatPrice = (price: number | null | undefined) => {
     if (!price) return null;
     return new Intl.NumberFormat('tr-TR').format(price) + ' TL';
   };
 
-  // Alan formatlama
   const formatArea = (area: number | null | undefined) => {
     if (!area) return null;
     return new Intl.NumberFormat('tr-TR').format(area) + ' m²';
   };
 
-  // Kategori etiketi
   const getCategoryLabel = () => {
     return typeLabels[project.type] || project.type;
   };
 
-  // Emlak tipi etiketi
   const getPropertyTypeLabel = () => {
     if (!details?.propertyType) return null;
     return propertyTypeLabels[details.propertyType] || details.propertyType;
@@ -67,20 +60,16 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     setIsFlipped(!isFlipped);
   };
 
-  // Fiyat
   const price = formatPrice(details?.price);
 
-  // Alan (residential için grossArea, commercial için area)
   const area = project.residentialDetails
     ? formatArea(project.residentialDetails.grossArea)
     : project.commercialDetails
       ? formatArea(project.commercialDetails.area)
       : null;
 
-  // Oda sayısı
   const roomCount = details?.roomCount;
 
-  // Emlak tipi
   const propertyType = getPropertyTypeLabel();
 
   return (
@@ -89,7 +78,6 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       onClick={handleCardClick}
     >
       <div className={`[transform-style:preserve-3d] [-webkit-transform-style:preserve-3d] [-ms-transform-style:preserve-3d] [perspective:1000px] [-webkit-perspective:1000px] w-full h-full relative group ${isFlipped ? '[&>*:first-child]:[transform:rotateY(-180deg)] [&>*:first-child]:[-webkit-transform:rotateY(-180deg)] [&>*:last-child]:[transform:rotateY(0deg)] [&>*:last-child]:[-webkit-transform:rotateY(0deg)]' : ''}`}>
-        {/* Front Face */}
         <div
           className="bg-cover bg-center bg-no-repeat rounded-xl [transition:transform_0.7s_cubic-bezier(0.4,0.2,0.2,1)] [-webkit-transition:transform_0.7s_cubic-bezier(0.4,0.2,0.2,1)] [-ms-transition:transform_0.7s_cubic-bezier(0.4,0.2,0.2,1)] [-webkit-backface-visibility:hidden] [backface-visibility:hidden] absolute top-0 left-0 w-full h-full shadow-[0_10px_30px_-5px_rgba(0,0,0,0.3)] [transform:rotateY(0deg)] [-webkit-transform:rotateY(0deg)] [-ms-transform:rotateY(0deg)] [transform-style:preserve-3d] [-webkit-transform-style:preserve-3d] [-ms-transform-style:preserve-3d] flex items-center justify-center group-hover:[transform:rotateY(-180deg)] group-hover:[-webkit-transform:rotateY(-180deg)] group-hover:[-ms-transform:rotateY(-180deg)]"
           style={{
@@ -114,7 +102,6 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           </div>
         </div>
 
-        {/* Back Face */}
         <div
           className="bg-cover bg-center bg-no-repeat rounded-xl [transition:transform_0.7s_cubic-bezier(0.4,0.2,0.2,1)] [-webkit-transition:transform_0.7s_cubic-bezier(0.4,0.2,0.2,1)] [-ms-transition:transform_0.7s_cubic-bezier(0.4,0.2,0.2,1)] [-webkit-backface-visibility:hidden] [backface-visibility:hidden] absolute top-0 left-0 w-full h-full shadow-[0_10px_30px_-5px_rgba(0,0,0,0.3)] [transform:rotateY(180deg)] [-webkit-transform:rotateY(180deg)] [-ms-transform:rotateY(180deg)] [transform-style:preserve-3d] [-webkit-transform-style:preserve-3d] [-ms-transform-style:preserve-3d] flex items-center justify-center bg-primary-dark group-hover:[transform:rotateY(0deg)] group-hover:[-webkit-transform:rotateY(0deg)] group-hover:[-ms-transform:rotateY(0deg)]"
           style={{

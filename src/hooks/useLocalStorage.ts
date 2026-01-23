@@ -2,25 +2,11 @@
 
 import { useState, useEffect, useCallback } from 'react'
 
-/**
- * useLocalStorage - localStorage ile senkronize çalışan state hook'u
- * Tema tercihi, sidebar durumu, kullanıcı ayarları gibi veriler için kullanışlıdır
- *
- * @param key - localStorage'da kullanılacak key
- * @param initialValue - Varsayılan değer
- * @returns [value, setValue, removeValue]
- *
- * @example
- * const [theme, setTheme] = useLocalStorage('theme', 'light')
- * const [sidebarOpen, setSidebarOpen] = useLocalStorage('sidebarOpen', true)
- */
 export function useLocalStorage<T>(
   key: string,
   initialValue: T
 ): [T, (value: T | ((prev: T) => T)) => void, () => void] {
-  // Başlangıç değerini localStorage'dan oku
   const readValue = useCallback((): T => {
-    // SSR kontrolü
     if (typeof window === 'undefined') {
       return initialValue
     }
@@ -36,10 +22,8 @@ export function useLocalStorage<T>(
 
   const [storedValue, setStoredValue] = useState<T>(readValue)
 
-  // localStorage'a yaz
   const setValue = useCallback(
     (value: T | ((prev: T) => T)) => {
-      // SSR kontrolü
       if (typeof window === 'undefined') {
         console.warn(
           `Tried setting localStorage key "${key}" even though environment is not a client`
@@ -48,16 +32,12 @@ export function useLocalStorage<T>(
       }
 
       try {
-        // Fonksiyon olarak verilmişse hesapla
         const newValue = value instanceof Function ? value(storedValue) : value
 
-        // localStorage'a kaydet
         window.localStorage.setItem(key, JSON.stringify(newValue))
 
-        // State'i güncelle
         setStoredValue(newValue)
 
-        // Diğer sekmelere bildir
         window.dispatchEvent(new StorageEvent('storage', { key }))
       } catch (error) {
         console.warn(`Error setting localStorage key "${key}":`, error)
@@ -66,7 +46,6 @@ export function useLocalStorage<T>(
     [key, storedValue]
   )
 
-  // localStorage'dan sil
   const removeValue = useCallback(() => {
     if (typeof window === 'undefined') {
       return
@@ -80,7 +59,6 @@ export function useLocalStorage<T>(
     }
   }, [key, initialValue])
 
-  // Diğer sekmelerdeki değişiklikleri dinle
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === key && event.newValue !== null) {
@@ -92,7 +70,6 @@ export function useLocalStorage<T>(
     return () => window.removeEventListener('storage', handleStorageChange)
   }, [key])
 
-  // İlk mount'ta localStorage'dan oku
   useEffect(() => {
     setStoredValue(readValue())
   }, [readValue])

@@ -1,19 +1,29 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Property } from "@/types";
 import PropertyCard from "@/components/frontend/PropertyCard";
 import DotGridBackground from "@/components/frontend/DotGridBackground";
 import { PageSpinner } from "@/components/ui/Spinner";
 import Pagination from "@/components/ui/Pagination";
+import SortDropdown from "@/components/ui/SortDropdown";
+import AnimatedSection from "@/components/ui/AnimatedSection";
 
 const ITEMS_PER_PAGE = 9;
+
+type SortOrder = 'newest' | 'oldest';
+
+const SORT_OPTIONS = [
+  { value: 'newest', label: 'Yeniden Eskiye' },
+  { value: 'oldest', label: 'Eskiden Yeniye' },
+];
 
 export default function PropertiesPage() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortOrder, setSortOrder] = useState<SortOrder>('newest');
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -40,16 +50,28 @@ export default function PropertiesPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [activeFilter]);
+  }, [activeFilter, sortOrder]);
 
   const filteredProperties = properties.filter(property => {
     if (activeFilter === "all") return true;
     return property.type === activeFilter;
   });
 
-  const totalPages = Math.ceil(filteredProperties.length / ITEMS_PER_PAGE);
+  const sortedProperties = useMemo(() => {
+    return [...filteredProperties].sort((a, b) => {
+      const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      if (sortOrder === 'newest') {
+        return dateB - dateA;
+      } else {
+        return dateA - dateB;
+      }
+    });
+  }, [filteredProperties, sortOrder]);
+
+  const totalPages = Math.ceil(sortedProperties.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedProperties = filteredProperties.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const paginatedProperties = sortedProperties.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   const totalProperties = properties.length;
   const residentialProperties = properties.filter(p => p.type === "RESIDENTIAL").length;
@@ -115,7 +137,7 @@ export default function PropertiesPage() {
 
       <section className="py-6 sm:py-8 md:py-10 border-b border-border bg-surface">
         <div className="container px-4 mx-auto">
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center gap-4 sm:hidden">
             <div className="flex flex-wrap justify-center gap-2">
               {filters.map((filter) => (
                 <button
@@ -131,7 +153,57 @@ export default function PropertiesPage() {
                 </button>
               ))}
             </div>
-
+            <SortDropdown
+              options={SORT_OPTIONS}
+              value={sortOrder}
+              onChange={(value) => setSortOrder(value as SortOrder)}
+            />
+          </div>
+          <div className="hidden sm:flex xl:hidden items-center justify-between gap-4">
+            <div className="flex flex-wrap gap-2">
+              {filters.map((filter) => (
+                <button
+                  key={filter.id}
+                  onClick={() => setActiveFilter(filter.id)}
+                  className={`px-4 py-2 text-sm cursor-pointer font-medium rounded-full transition-all duration-200 ${
+                    activeFilter === filter.id
+                      ? "bg-primary text-text-white shadow-lg shadow-blue-600/25"
+                      : "bg-surface-hover text-text-secondary hover:bg-border"
+                  }`}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+            <SortDropdown
+              options={SORT_OPTIONS}
+              value={sortOrder}
+              onChange={(value) => setSortOrder(value as SortOrder)}
+            />
+          </div>
+          <div className="hidden xl:flex items-center justify-center relative">
+            <div className="flex flex-wrap justify-center gap-2">
+              {filters.map((filter) => (
+                <button
+                  key={filter.id}
+                  onClick={() => setActiveFilter(filter.id)}
+                  className={`px-4 py-2 text-sm cursor-pointer font-medium rounded-full transition-all duration-200 ${
+                    activeFilter === filter.id
+                      ? "bg-primary text-text-white shadow-lg shadow-blue-600/25"
+                      : "bg-surface-hover text-text-secondary hover:bg-border"
+                  }`}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+            <div className="absolute right-0">
+              <SortDropdown
+                options={SORT_OPTIONS}
+                value={sortOrder}
+                onChange={(value) => setSortOrder(value as SortOrder)}
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -141,9 +213,19 @@ export default function PropertiesPage() {
           {paginatedProperties.length > 0 ? (
             <>
               <div className="grid grid-cols-1 gap-8 md:grid-cols-2 place-items-center lg:grid-cols-3">
-                {paginatedProperties.map((property) => (
-                  <PropertyCard key={property.id} property={property} />
-                ))}
+                {paginatedProperties.map((property, index) => {
+                  const getAnimation = () => {
+                    const positionInRow = index % 3;
+                    if (positionInRow === 0) return "fade-right";
+                    if (positionInRow === 1) return "fade-up";
+                    return "fade-left";
+                  };
+                  return (
+                    <AnimatedSection key={property.id} animation={getAnimation()} duration={600} delay={(index % 3) * 100} className="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[380px]">
+                      <PropertyCard property={property} />
+                    </AnimatedSection>
+                  );
+                })}
               </div>
 
               <Pagination

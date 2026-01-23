@@ -2,12 +2,8 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react'
 
-// CSRF token cache
 let cachedCSRFToken: string | null = null
 
-/**
- * CSRF token'ı al veya cache'den döndür
- */
 async function getCSRFToken(): Promise<string | null> {
   if (cachedCSRFToken) {
     return cachedCSRFToken
@@ -31,16 +27,10 @@ async function getCSRFToken(): Promise<string | null> {
   return null
 }
 
-/**
- * CSRF token'ı sıfırla
- */
 export function clearCSRFToken(): void {
   cachedCSRFToken = null
 }
 
-/**
- * CSRF token'ı yenile
- */
 export async function refreshCSRFToken(): Promise<string | null> {
   cachedCSRFToken = null
   return getCSRFToken()
@@ -57,10 +47,6 @@ interface ApiState<T> {
   error: Error | null
 }
 
-/**
- * API istekleri için hook
- * Otomatik CSRF token yönetimi
- */
 export function useApi<T = unknown>(options: UseApiOptions = {}) {
   const [state, setState] = useState<ApiState<T>>({
     data: null,
@@ -71,14 +57,10 @@ export function useApi<T = unknown>(options: UseApiOptions = {}) {
   const optionsRef = useRef(options)
   optionsRef.current = options
 
-  // İlk mount'ta CSRF token al
   useEffect(() => {
     getCSRFToken()
   }, [])
 
-  /**
-   * API isteği yap
-   */
   const request = useCallback(async (
     url: string,
     requestOptions: RequestInit = {}
@@ -94,7 +76,6 @@ export function useApi<T = unknown>(options: UseApiOptions = {}) {
         ...(requestOptions.headers as Record<string, string> || {}),
       }
 
-      // CSRF token ekle
       if (needsCSRF) {
         const token = await getCSRFToken()
         if (token) {
@@ -108,7 +89,6 @@ export function useApi<T = unknown>(options: UseApiOptions = {}) {
         credentials: 'include',
       })
 
-      // CSRF token hatası - yenile ve tekrar dene
       if (response.status === 403) {
         const errorData = await response.json().catch(() => ({}))
 
@@ -153,16 +133,10 @@ export function useApi<T = unknown>(options: UseApiOptions = {}) {
     }
   }, [])
 
-  /**
-   * GET isteği
-   */
   const get = useCallback(<R = unknown>(url: string): Promise<R | null> => {
     return request(url, { method: 'GET' }) as Promise<R | null>
   }, [request])
 
-  /**
-   * POST isteği
-   */
   const post = useCallback(<R = unknown>(url: string, data?: unknown): Promise<R | null> => {
     return request(url, {
       method: 'POST',
@@ -170,9 +144,6 @@ export function useApi<T = unknown>(options: UseApiOptions = {}) {
     }) as Promise<R | null>
   }, [request])
 
-  /**
-   * PUT isteği
-   */
   const put = useCallback(<R = unknown>(url: string, data?: unknown): Promise<R | null> => {
     return request(url, {
       method: 'PUT',
@@ -180,9 +151,6 @@ export function useApi<T = unknown>(options: UseApiOptions = {}) {
     }) as Promise<R | null>
   }, [request])
 
-  /**
-   * PATCH isteği
-   */
   const patch = useCallback(<R = unknown>(url: string, data?: unknown): Promise<R | null> => {
     return request(url, {
       method: 'PATCH',
@@ -190,16 +158,10 @@ export function useApi<T = unknown>(options: UseApiOptions = {}) {
     }) as Promise<R | null>
   }, [request])
 
-  /**
-   * DELETE isteği
-   */
   const del = useCallback(<R = unknown>(url: string): Promise<R | null> => {
     return request(url, { method: 'DELETE' }) as Promise<R | null>
   }, [request])
 
-  /**
-   * FormData ile upload
-   */
   const upload = useCallback(async <R = unknown>(url: string, formData: FormData): Promise<R | null> => {
     setState(prev => ({ ...prev, loading: true, error: null }))
 

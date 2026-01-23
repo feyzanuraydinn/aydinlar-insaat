@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireAuth } from '@/lib/session'
 import { deleteMultipleFromCloudinary } from '@/lib/cloudinary'
+import { generateSlug } from '@/lib/utils'
 
-// GET - Tek gayrimenkul detayı
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -16,7 +16,10 @@ export async function GET(
       where: { id },
       include: {
         images: {
-          orderBy: { order: 'asc' }
+          orderBy: [
+            { isCover: 'desc' },
+            { order: 'asc' }
+          ]
         },
         residentialDetails: true,
         commercialDetails: true,
@@ -41,7 +44,6 @@ export async function GET(
   }
 }
 
-// PUT - Gayrimenkul güncelle (tam güncelleme)
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -69,7 +71,6 @@ export async function PUT(
       landDetails,
     } = data
 
-    // Mevcut gayrimenkulu kontrol et
     const existingProperty = await prisma.property.findUnique({
       where: { id },
       include: {
@@ -87,25 +88,11 @@ export async function PUT(
       )
     }
 
-    // Slug mantığı:
-    // 1. Eğer slug verilmişse ve mevcut slug'dan farklıysa, yeni slug kullan
-    // 2. Eğer slug verilmemişse, mevcut slug'ı koru (başlık değişse bile)
-    let finalSlug = existingProperty.slug // Varsayılan: mevcut slug'ı koru
+    let finalSlug = existingProperty.slug
 
     if (slug && slug !== existingProperty.slug) {
-      // Kullanıcı manuel olarak slug değiştirmek istiyor
-      let baseSlug = slug
-        .toLowerCase()
-        .replace(/ğ/g, 'g')
-        .replace(/ü/g, 'u')
-        .replace(/ş/g, 's')
-        .replace(/ı/g, 'i')
-        .replace(/ö/g, 'o')
-        .replace(/ç/g, 'c')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '')
+      let baseSlug = generateSlug(slug)
 
-      // Benzersizlik kontrolü (kendi ID'si hariç)
       finalSlug = baseSlug
       let counter = 1
       while (await prisma.property.findFirst({
@@ -119,7 +106,6 @@ export async function PUT(
       }
     }
 
-    // Gayrimenkul tipine göre güncelle
     const propertyData: any = {
       title,
       location,
@@ -134,21 +120,17 @@ export async function PUT(
       metaDescription: metaDescription || description.substring(0, 160),
     }
 
-    // Handle image updates - only delete removed images from Cloudinary
     if (images) {
       const oldImages = existingProperty.images
       const newImageUrls = images.map((img: any) => img.url)
 
-      // Find images that were removed (exist in old but not in new)
       const removedImages = oldImages.filter(oldImg => !newImageUrls.includes(oldImg.url))
       const removedPublicIds = removedImages.map(img => img.publicId).filter(Boolean)
 
-      // Only delete removed images from Cloudinary
       if (removedPublicIds.length > 0) {
         await deleteMultipleFromCloudinary(removedPublicIds)
       }
 
-      // Delete all existing image records from database (will recreate with new list)
       await prisma.propertyImage.deleteMany({
         where: { propertyId: id }
       })
@@ -164,7 +146,6 @@ export async function PUT(
       }
     }
 
-    // Tip değiştiyse eski detayları sil
     if (existingProperty.type !== type) {
       if (existingProperty.residentialDetails) {
         await prisma.residentialProperty.delete({
@@ -183,7 +164,6 @@ export async function PUT(
       }
     }
 
-    // Tip bazlı detayları güncelle veya oluştur
     if (type === "RESIDENTIAL" && residentialDetails) {
       if (existingProperty.type === "RESIDENTIAL" && existingProperty.residentialDetails) {
         propertyData.residentialDetails = {
@@ -237,7 +217,6 @@ export async function PUT(
   }
 }
 
-// PATCH - Kısmi güncelleme (featured durum vb.)
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -247,7 +226,6 @@ export async function PATCH(
     const { id } = await params
     const data = await req.json()
 
-    // Öne çıkarma işlemi için özel mantık
     if (data.featured !== undefined || data.featuredOrder !== undefined) {
       const currentProperty = await prisma.property.findUnique({
         where: { id }
@@ -260,9 +238,7 @@ export async function PATCH(
         )
       }
 
-      // Öne çıkarma açılıyorsa
       if (data.featured === true) {
-        // Mevcut öne çıkarılan gayrimenkulleri al
         const featuredProperties = await prisma.property.findMany({
           where: {
             featured: true,
@@ -271,7 +247,6 @@ export async function PATCH(
           orderBy: { featuredOrder: 'asc' }
         })
 
-        // Zaten 3 tane varsa hata döndür
         if (featuredProperties.length >= 3) {
           return NextResponse.json(
             { error: 'En fazla 3 gayrimenkul öne çıkarılabilir' },
@@ -279,7 +254,6 @@ export async function PATCH(
           )
         }
 
-        // Eğer sıra belirtilmemişse, boş olan ilk sırayı bul
         let newOrder = data.featuredOrder
         if (!newOrder) {
           const usedOrders = featuredProperties.map(p => p.featuredOrder).filter(Boolean) as number[]
@@ -291,10 +265,8 @@ export async function PATCH(
           }
         }
 
-        // Aynı sırada başka gayrimenkul varsa, diğerlerini kaydır
         const existingAtOrder = featuredProperties.find(p => p.featuredOrder === newOrder)
         if (existingAtOrder) {
-          // Tüm gayrimenkulleri yeniden sırala
           const propertiesToUpdate = featuredProperties.filter(p => p.featuredOrder && p.featuredOrder >= newOrder)
 
           for (const p of propertiesToUpdate.reverse()) {
@@ -305,7 +277,6 @@ export async function PATCH(
                 data: { featuredOrder: nextOrder }
               })
             } else {
-              // 3'ten büyükse öne çıkarmayı kaldır
               await prisma.property.update({
                 where: { id: p.id },
                 data: { featured: false, featuredOrder: null }
@@ -317,13 +288,11 @@ export async function PATCH(
         data.featuredOrder = newOrder
       }
 
-      // Sadece sıra değişiyorsa (featured zaten true)
       if (data.featured === undefined && data.featuredOrder !== undefined && currentProperty.featured) {
         const targetOrder = data.featuredOrder
         const currentOrder = currentProperty.featuredOrder
 
         if (targetOrder !== currentOrder) {
-          // Hedef sırada başka gayrimenkul var mı?
           const propertyAtTarget = await prisma.property.findFirst({
             where: {
               featured: true,
@@ -333,15 +302,12 @@ export async function PATCH(
           })
 
           if (propertyAtTarget) {
-            // Swap yap veya kaydır
             if (currentOrder) {
-              // Swap
               await prisma.property.update({
                 where: { id: propertyAtTarget.id },
                 data: { featuredOrder: currentOrder }
               })
             } else {
-              // Kaydır
               const allFeatured = await prisma.property.findMany({
                 where: {
                   featured: true,
@@ -350,7 +316,6 @@ export async function PATCH(
                 orderBy: { featuredOrder: 'asc' }
               })
 
-              // Hedef sıradan sonrakileri bir kaydır
               for (const p of allFeatured.reverse()) {
                 if (p.featuredOrder && p.featuredOrder >= targetOrder) {
                   const nextOrder = p.featuredOrder + 1
@@ -372,7 +337,6 @@ export async function PATCH(
         }
       }
 
-      // Öne çıkarma kapatılıyorsa
       if (data.featured === false) {
         data.featuredOrder = null
       }
@@ -389,10 +353,9 @@ export async function PATCH(
       }
     })
 
-    // Güncel tüm gayrimenkulleri döndür (frontend'in güncellenmesi için)
     const allProperties = await prisma.property.findMany({
       include: {
-        images: { orderBy: { order: 'asc' } },
+        images: { orderBy: [{ isCover: 'desc' }, { order: 'asc' }] },
         residentialDetails: true,
         commercialDetails: true,
         landDetails: true,
@@ -410,7 +373,6 @@ export async function PATCH(
   }
 }
 
-// DELETE - Delete property
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -419,7 +381,6 @@ export async function DELETE(
     await requireAuth()
     const { id } = await params
 
-    // Get images first
     const property = await prisma.property.findUnique({
       where: { id },
       include: { images: true }
@@ -432,11 +393,9 @@ export async function DELETE(
       )
     }
 
-    // Delete images from Cloudinary
     const publicIds = property.images.map(img => img.publicId)
     await deleteMultipleFromCloudinary(publicIds)
 
-    // Delete property (images will be cascade deleted)
     await prisma.property.delete({
       where: { id }
     })

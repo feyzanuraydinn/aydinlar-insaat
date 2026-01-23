@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireAuth } from '@/lib/session'
 
-// GET - Tüm hero card'ları getir
 export async function GET(req: NextRequest) {
   try {
     await requireAuth()
@@ -21,7 +20,6 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST - Create new hero card
 export async function POST(req: NextRequest) {
   try {
     await requireAuth()

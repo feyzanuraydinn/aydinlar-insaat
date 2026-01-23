@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-// GET - Public ayarları getir (auth gerekmez)
 export async function GET(req: NextRequest) {
   try {
-    // Tüm settings tablolarını çek
     const [
       homePage,
       aboutPage,
@@ -21,7 +19,6 @@ export async function GET(req: NextRequest) {
       prisma.footerSettings.findFirst(),
     ])
 
-    // Decimal tiplerini number'a dönüştür
     const contactPageFormatted = contactPage ? {
       ...contactPage,
       latitude: contactPage.latitude ? parseFloat(String(contactPage.latitude)) : null,

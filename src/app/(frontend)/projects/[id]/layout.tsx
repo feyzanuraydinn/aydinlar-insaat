@@ -2,6 +2,8 @@ import type { Metadata } from "next"
 import { prisma } from "@/lib/prisma"
 import { RealEstateListingJsonLd } from "@/components/seo/JsonLd"
 
+export const dynamic = 'force-dynamic';
+
 interface Props {
   params: Promise<{ id: string }>
   children: React.ReactNode

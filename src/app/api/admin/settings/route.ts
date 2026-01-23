@@ -2,12 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireAuth } from '@/lib/session'
 
-// GET - Tüm ayarları getir
 export async function GET(req: NextRequest) {
   try {
     await requireAuth()
 
-    // Tüm settings tablolarını çek
     const [
       homePage,
       aboutPage,
@@ -28,7 +26,6 @@ export async function GET(req: NextRequest) {
       prisma.footerSettings.findFirst()
     ])
 
-    // Decimal tiplerini number'a dönüştür
     const contactPageFormatted = contactPage ? {
       ...contactPage,
       latitude: contactPage.latitude ? parseFloat(String(contactPage.latitude)) : null,
@@ -54,7 +51,6 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// PUT - Ayarları güncelle
 export async function PUT(req: NextRequest) {
   try {
     await requireAuth()
@@ -65,7 +61,6 @@ export async function PUT(req: NextRequest) {
 
     switch (type) {
       case 'homePage':
-        // İlk kaydı güncelle veya oluştur
         const existing = await prisma.homePageSettings.findFirst()
         if (existing) {
           result = await prisma.homePageSettings.update({
@@ -115,7 +110,6 @@ export async function PUT(req: NextRequest) {
 
       case 'contactPage':
         const existingContact = await prisma.contactPageSettings.findFirst()
-        // Decimal tipi için dönüşüm yap
         const contactData = {
           contactTitle: data.contactTitle,
           contactTeamDescription: data.contactTeamDescription,

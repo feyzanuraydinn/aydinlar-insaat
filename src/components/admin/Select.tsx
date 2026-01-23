@@ -49,7 +49,6 @@ export default function Select({
     }
   }, [isOpen])
 
-  // Standalone mode (no label)
   if (!label) {
     return (
       <div className="relative" ref={dropdownRef}>
@@ -97,7 +96,6 @@ export default function Select({
     )
   }
 
-  // Form mode (with label)
   const id = `select-${label.replace(/\s/g, "-").toLowerCase()}`
 
   return (

@@ -9,8 +9,16 @@ import { PROJECT_TYPE_OPTIONS } from "@/data/property-labels"
 import { useApi } from "@/hooks/useApi"
 import Pagination from "@/components/ui/Pagination"
 import { AdminListPageSkeleton } from "@/components/ui/Skeleton"
+import SortDropdown from "@/components/ui/SortDropdown"
 
 const ITEMS_PER_PAGE = 9
+
+type SortOrder = 'newest' | 'oldest'
+
+const SORT_OPTIONS = [
+  { value: 'newest', label: 'Yeniden Eskiye' },
+  { value: 'oldest', label: 'Eskiden Yeniye' },
+]
 
 export default function ProjectsPage() {
   const router = useRouter()
@@ -18,6 +26,7 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
+  const [sortOrder, setSortOrder] = useState<SortOrder>('newest')
   const api = useApi()
 
   const fetchProjects = useCallback(async () => {
@@ -37,7 +46,6 @@ export default function ProjectsPage() {
     fetchProjects()
   }, [])
 
-  // Öne çıkarılan proje sayısı ve kullanılan sıralar
   const { featuredCount, usedOrders } = useMemo(() => {
     const featured = projects.filter(p => p.featured)
     return {
@@ -46,23 +54,23 @@ export default function ProjectsPage() {
     }
   }, [projects])
 
-  // Projeleri sırala: önce öne çıkarılanlar (featuredOrder'a göre), sonra diğerleri (createdAt'e göre)
   const sortedProjects = useMemo(() => {
     return [...projects].sort((a, b) => {
-      // Her ikisi de öne çıkarılmış
       if (a.featured && b.featured) {
         return (a.featuredOrder || 999) - (b.featuredOrder || 999)
       }
-      // Sadece a öne çıkarılmış
       if (a.featured) return -1
-      // Sadece b öne çıkarılmış
       if (b.featured) return 1
-      // Hiçbiri öne çıkarılmamış - createdAt'e göre (yeniden eskiye)
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      const yearA = parseInt(a.year) || 0
+      const yearB = parseInt(b.year) || 0
+      if (sortOrder === 'newest') {
+        return yearB - yearA
+      } else {
+        return yearA - yearB
+      }
     })
-  }, [projects])
+  }, [projects, sortOrder])
 
-  // Pagination
   const totalPages = Math.ceil(sortedProjects.length / ITEMS_PER_PAGE)
   const paginatedProjects = sortedProjects.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
@@ -70,16 +78,13 @@ export default function ProjectsPage() {
   )
 
   const toggleFeatured = async (projectId: string, currentFeatured: boolean, currentOrder: number | null) => {
-    // Optimistic update - önce UI'ı güncelle
     const newFeatured = !currentFeatured
 
-    // Eğer öne çıkarılacaksa ve zaten 3 tane varsa, işlemi engelle
     if (newFeatured && featuredCount >= 3) {
       toast.error('En fazla 3 proje öne çıkarılabilir')
       return
     }
 
-    // Yeni sıra hesapla
     let newOrder: number | null = null
     if (newFeatured) {
       for (let i = 1; i <= 3; i++) {
@@ -90,7 +95,6 @@ export default function ProjectsPage() {
       }
     }
 
-    // Optimistic update
     setProjects(prev => prev.map(p =>
       p.id === projectId
         ? { ...p, featured: newFeatured, featuredOrder: newOrder }
@@ -103,39 +107,32 @@ export default function ProjectsPage() {
       })
 
       if (data) {
-        // API'den gelen tüm projeleri güncelle (swap/shift işlemleri dahil)
         if (data.allProjects) {
           setProjects(data.allProjects)
         }
         toast.success(newFeatured ? 'Proje öne çıkarıldı' : 'Öne çıkarma kaldırıldı')
       } else {
-        // Hata durumunda geri al
         fetchProjects()
         toast.error('Öne çıkarma durumu güncellenemedi')
       }
     } catch (error) {
       console.error("Öne çıkan durumu güncellenemedi:", error)
-      // Hata durumunda geri al
       fetchProjects()
       toast.error('Bir hata oluştu')
     }
   }
 
   const updateFeaturedOrder = async (projectId: string, order: number) => {
-    // Mevcut projeyi bul
     const currentProject = projects.find(p => p.id === projectId)
     const oldOrder = currentProject?.featuredOrder
 
-    // Optimistic update
     setProjects(prev => {
-      // Hedef sırada başka bir proje var mı?
       const targetProject = prev.find(p => p.featured && p.featuredOrder === order && p.id !== projectId)
 
       return prev.map(p => {
         if (p.id === projectId) {
           return { ...p, featuredOrder: order }
         }
-        // Swap: hedef sıradaki projeye eski sırayı ver
         if (targetProject && p.id === targetProject.id) {
           return { ...p, featuredOrder: oldOrder }
         }
@@ -149,19 +146,16 @@ export default function ProjectsPage() {
       })
 
       if (data) {
-        // API'den gelen tüm projeleri güncelle (swap işlemleri dahil)
         if (data.allProjects) {
           setProjects(data.allProjects)
         }
         toast.success(`Sıra ${order} olarak güncellendi`)
       } else {
-        // Hata durumunda geri al
         fetchProjects()
         toast.error('Sıra güncellenemedi')
       }
     } catch (error) {
       console.error("Sıra güncellenemedi:", error)
-      // Hata durumunda geri al
       fetchProjects()
       toast.error('Bir hata oluştu')
     }
@@ -170,13 +164,11 @@ export default function ProjectsPage() {
   const togglePublished = async (projectId: string, currentPublished: boolean) => {
     const newPublished = !currentPublished
 
-    // Optimistic update
     setProjects(prev => prev.map(p =>
       p.id === projectId
         ? {
             ...p,
             publishedAt: newPublished ? new Date().toISOString() : null,
-            // Yayından kaldırılıyorsa öne çıkarma bilgisini de temizle
             ...(currentPublished && { featured: false, featuredOrder: null })
           }
         : p
@@ -185,24 +177,20 @@ export default function ProjectsPage() {
     try {
       const data = await api.patch<{ allProjects?: any[] }>(`/api/admin/projects/${projectId}`, {
         publishedAt: newPublished ? new Date().toISOString() : null,
-        // Yayından kaldırılıyorsa öne çıkarma bilgisini de temizle
         ...(currentPublished && { featured: false, featuredOrder: null })
       })
 
       if (data) {
-        // API'den gelen tüm projeleri güncelle
         if (data.allProjects) {
           setProjects(data.allProjects)
         }
         toast.success(newPublished ? 'Yayınlandı' : 'Yayından kaldırıldı')
       } else {
-        // Hata durumunda geri al
         fetchProjects()
         toast.error('Yayınlama durumu güncellenemedi')
       }
     } catch (error) {
       console.error("Yayınlama durumu güncellenemedi:", error)
-      // Hata durumunda geri al
       fetchProjects()
       toast.error('Bir hata oluştu')
     }
@@ -225,9 +213,20 @@ export default function ProjectsPage() {
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-text-heading">Projeler</h1>
           <p className="text-text-secondary mt-1 sm:mt-2 text-sm sm:text-base">Tamamlanmış projelerinizi buradan yönetin</p>
         </div>
-        <Button variant="add" href="/admin/projects/new">
-          Yeni Proje Ekle
-        </Button>
+        <div className="flex items-center gap-3">
+          <SortDropdown
+            options={SORT_OPTIONS}
+            value={sortOrder}
+            onChange={(value) => {
+              setSortOrder(value as SortOrder)
+              setCurrentPage(1)
+            }}
+            variant="admin"
+          />
+          <Button variant="add" href="/admin/projects/new">
+            Yeni Proje Ekle
+          </Button>
+        </div>
       </div>
 
       {sortedProjects.length === 0 ? (

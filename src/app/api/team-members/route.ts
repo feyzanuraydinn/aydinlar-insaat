@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-// GET - Public ekip üyelerini getir (auth gerekmez)
 export async function GET(req: NextRequest) {
   try {
     const teamMembers = await prisma.contactCard.findMany({

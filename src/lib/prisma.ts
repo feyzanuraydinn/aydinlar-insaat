@@ -7,17 +7,15 @@ const globalForPrisma = globalThis as unknown as {
   pool: Pool | undefined;
 };
 
-// Create pool only once globally
 if (!globalForPrisma.pool) {
   globalForPrisma.pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    max: 1, // Single connection for serverless
+    max: 1,
     idleTimeoutMillis: 20000,
     connectionTimeoutMillis: 10000,
   });
 }
 
-// Create Prisma client only once globally
 if (!globalForPrisma.prisma) {
   const adapter = new PrismaPg(globalForPrisma.pool);
   globalForPrisma.prisma = new PrismaClient({ adapter });

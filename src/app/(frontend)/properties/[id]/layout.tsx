@@ -2,6 +2,8 @@ import type { Metadata } from "next"
 import { prisma } from "@/lib/prisma"
 import { RealEstateListingJsonLd } from "@/components/seo/JsonLd"
 
+export const dynamic = 'force-dynamic';
+
 interface Props {
   params: Promise<{ id: string }>
   children: React.ReactNode
@@ -86,7 +88,6 @@ export default async function PropertyDetailLayout({ children, params }: Props) 
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://aydinlarinsaat.com"
 
-  // Arsa için fiyat hesapla (m² x m² fiyatı)
   const landPrice = property?.landDetails?.pricePerSqm && property?.landDetails?.area
     ? Number(property.landDetails.pricePerSqm) * Number(property.landDetails.area)
     : undefined

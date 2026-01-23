@@ -1,12 +1,5 @@
-/**
- * API Client - CSRF korumalı API istekleri için
- */
-
 let csrfToken: string | null = null
 
-/**
- * CSRF token'ı al
- */
 export async function fetchCSRFToken(): Promise<string | null> {
   try {
     const response = await fetch('/api/admin/csrf', {
@@ -27,9 +20,6 @@ export async function fetchCSRFToken(): Promise<string | null> {
   }
 }
 
-/**
- * CSRF token'ı getir (cache'den veya yeni al)
- */
 export async function getCSRFToken(): Promise<string | null> {
   if (csrfToken) {
     return csrfToken
@@ -38,23 +28,14 @@ export async function getCSRFToken(): Promise<string | null> {
   return fetchCSRFToken()
 }
 
-/**
- * CSRF token'ı sıfırla (logout sonrası)
- */
 export function clearCSRFToken(): void {
   csrfToken = null
 }
 
-/**
- * API istek ayarları
- */
 interface APIRequestOptions extends RequestInit {
   skipCSRF?: boolean
 }
 
-/**
- * CSRF korumalı API isteği yap
- */
 export async function apiRequest<T>(
   url: string,
   options: APIRequestOptions = {}
@@ -66,7 +47,6 @@ export async function apiRequest<T>(
     ...(customHeaders as Record<string, string>),
   }
 
-  // CSRF token ekle (POST, PUT, PATCH, DELETE için)
   const method = (rest.method || 'GET').toUpperCase()
   const needsCSRF = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)
 
@@ -83,14 +63,11 @@ export async function apiRequest<T>(
     credentials: 'include',
   })
 
-  // CSRF token hatası - yeni token al ve tekrar dene
   if (response.status === 403) {
     const data = await response.json()
     if (data.error === 'Invalid CSRF token' || data.error === 'CSRF token missing') {
-      // Yeni token al
       await fetchCSRFToken()
 
-      // Tekrar dene
       const retryToken = await getCSRFToken()
       if (retryToken) {
         headers['x-csrf-token'] = retryToken
@@ -121,16 +98,10 @@ export async function apiRequest<T>(
   return response.json()
 }
 
-/**
- * GET isteği
- */
 export function apiGet<T>(url: string, options?: APIRequestOptions): Promise<T> {
   return apiRequest<T>(url, { ...options, method: 'GET' })
 }
 
-/**
- * POST isteği
- */
 export function apiPost<T>(
   url: string,
   data?: unknown,
@@ -143,9 +114,6 @@ export function apiPost<T>(
   })
 }
 
-/**
- * PUT isteği
- */
 export function apiPut<T>(
   url: string,
   data?: unknown,
@@ -158,9 +126,6 @@ export function apiPut<T>(
   })
 }
 
-/**
- * PATCH isteği
- */
 export function apiPatch<T>(
   url: string,
   data?: unknown,
@@ -173,16 +138,10 @@ export function apiPatch<T>(
   })
 }
 
-/**
- * DELETE isteği
- */
 export function apiDelete<T>(url: string, options?: APIRequestOptions): Promise<T> {
   return apiRequest<T>(url, { ...options, method: 'DELETE' })
 }
 
-/**
- * Form data ile upload (CSRF korumalı)
- */
 export async function apiUpload<T>(
   url: string,
   formData: FormData,

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import DotGridBackground from "@/components/frontend/DotGridBackground";
 import { PageSpinner } from "@/components/ui/Spinner";
+import AnimatedSection from "@/components/ui/AnimatedSection";
 
 interface TeamMember {
   id: string;
@@ -56,28 +57,22 @@ export default function ContactPage() {
     fetchData();
   }, []);
 
-  // Loading durumunda spinner göster
   if (loading) {
     return <PageSpinner />;
   }
 
-  // Veriler yüklendikten sonraki değerler
   const contactTitle = settings?.contactPage?.contactTitle || "İletişim";
   const contactTeamDescription = settings?.contactPage?.contactTeamDescription || "Size en yakın temsilcimizle iletişime geçin";
   const latitude = settings?.contactPage?.latitude || 40.72826;
   const longitude = settings?.contactPage?.longitude || 29.98846;
 
-  // Google Maps URL oluştur - marker ile
   const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}&z=15&output=embed`;
 
   return (
     <div className="min-h-screen bg-surface">
-      {/* Hero Section with Map */}
       <section className="relative min-h-[50vh] sm:min-h-[55vh] md:min-h-[60vh] overflow-hidden bg-hero pt-20 pb-8 sm:pt-24 sm:pb-12">
-        {/* DotGrid Background */}
         <DotGridBackground/>
 
-        {/* Google Maps */}
         <div className="container relative z-10 h-full px-4 mx-auto">
           <div className="flex flex-col items-center justify-center h-full text-center text-text-white">
             <h1 className="mb-4 sm:mb-6 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-text-white">{contactTitle}</h1>
@@ -85,7 +80,6 @@ export default function ContactPage() {
               {contactTeamDescription}
             </p>
 
-            {/* Google Maps Embed */}
             <div className="w-full h-48 sm:h-56 md:h-64 max-w-4xl overflow-hidden shadow-2xl rounded-xl">
               <iframe
                 src={mapUrl}
@@ -102,27 +96,34 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Team Members Section */}
       <section className="py-12 sm:py-16 md:py-20 bg-surface">
         <div className="container px-4 mx-auto">
-          <div className="mb-8 sm:mb-12 md:mb-16 text-center">
-            <h2 className="mb-3 sm:mb-4 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-text-heading">
-              Ekibimiz
-            </h2>
-            <p className="max-w-2xl mx-auto text-sm sm:text-base text-text-secondary">
-              {contactTeamDescription || "30 yıllık tecrübemizle projelerinizi hayata geçiren uzman ekibimizle tanışın"}
-            </p>
-          </div>
+          <AnimatedSection animation="fade-down" duration={600}>
+            <div className="mb-8 sm:mb-12 md:mb-16 text-center">
+              <h2 className="mb-3 sm:mb-4 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-text-heading">
+                Ekibimiz
+              </h2>
+              <p className="max-w-2xl mx-auto text-sm sm:text-base text-text-secondary">
+                {contactTeamDescription || "30 yıllık tecrübemizle projelerinizi hayata geçiren uzman ekibimizle tanışın"}
+              </p>
+            </div>
+          </AnimatedSection>
 
           {teamMembers.length > 0 ? (
             <div className="grid max-w-6xl grid-cols-1 gap-6 sm:gap-8 mx-auto sm:grid-cols-2 lg:grid-cols-3">
-              {teamMembers.map((member) => (
-                <div
-                  key={member.id}
-                  className="w-full max-w-[260px] sm:max-w-[280px] rounded-xl shadow-lg overflow-hidden bg-surface flex flex-col transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 mx-auto"
-                >
-                  {/* Profile Image */}
-                  <div className="w-full aspect-[5/4] bg-surface-hover overflow-hidden">
+              {teamMembers.map((member, index) => {
+                const getAnimation = () => {
+                  const positionInRow = index % 3;
+                  if (positionInRow === 0) return "fade-right";
+                  if (positionInRow === 1) return "fade-up";
+                  return "fade-left";
+                };
+                return (
+                <AnimatedSection key={member.id} animation={getAnimation()} duration={600} delay={(index % 3) * 100}>
+                  <div
+                    className="w-full max-w-[260px] sm:max-w-[280px] rounded-xl shadow-lg overflow-hidden bg-surface flex flex-col transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 mx-auto"
+                  >
+                  <div className="w-full aspect-[5/4] bg-surface-hover overflow-hidden flex items-center justify-center">
                     <img
                       src={member.image}
                       alt={member.name}
@@ -130,9 +131,7 @@ export default function ContactPage() {
                     />
                   </div>
 
-                  {/* Content */}
                   <div className="p-3 sm:p-4 flex flex-col gap-2">
-                    {/* Name & Profession */}
                     <div className="text-center border-b border-gray-100 pb-2">
                       <h3 className="text-sm sm:text-base font-bold text-text-heading">{member.name}</h3>
                       {member.profession && (
@@ -140,9 +139,7 @@ export default function ContactPage() {
                       )}
                     </div>
 
-                    {/* Contact Info */}
                     <div className="flex flex-col gap-1.5">
-                      {/* Phone */}
                       {member.phone && (
                         <a
                           href={`tel:${member.phone.replace(/\s/g, '')}`}
@@ -161,7 +158,6 @@ export default function ContactPage() {
                         </a>
                       )}
 
-                      {/* Email */}
                       {member.email && (
                         <a
                           href={`mailto:${member.email}`}
@@ -181,7 +177,6 @@ export default function ContactPage() {
                         </a>
                       )}
 
-                      {/* Website URL (optional) */}
                       {member.websiteUrl && (
                         <a
                           href={member.websiteUrl}
@@ -210,7 +205,9 @@ export default function ContactPage() {
                     </div>
                   </div>
                 </div>
-              ))}
+                </AnimatedSection>
+              );
+              })}
             </div>
           ) : (
             <div className="py-8 sm:py-12 text-center">

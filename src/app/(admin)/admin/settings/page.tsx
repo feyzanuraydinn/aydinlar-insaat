@@ -11,7 +11,6 @@ import { useToast } from "@/components/admin/Toast"
 import ConfirmDialog from "@/components/admin/ConfirmModal"
 import { useApi } from "@/hooks/useApi"
 
-// Leaflet'i sadece istemci tarafında yükle
 const LocationPicker = dynamic(() => import("@/components/admin/LocationPicker"), {
   ssr: false,
   loading: () => (
@@ -75,7 +74,6 @@ interface Settings {
     description: string
     phone: string
     email: string
-    address: string
   }
 }
 
@@ -128,7 +126,6 @@ export default function SettingsPage() {
       description: "",
       phone: "",
       email: "",
-      address: "",
     },
   })
 
@@ -167,7 +164,6 @@ export default function SettingsPage() {
           description: data.footer?.description || "",
           phone: data.footer?.phone || "",
           email: data.footer?.email || "",
-          address: data.footer?.address || "",
         },
       })
     } catch (err: any) {
@@ -185,7 +181,6 @@ export default function SettingsPage() {
 
       const cards = data.heroCards || []
 
-      // Ensure exactly 4 cards exist
       while (cards.length < 4) {
         cards.push({
           id: `new-${cards.length + 1}`,
@@ -251,7 +246,6 @@ export default function SettingsPage() {
   }
 
   const handleHeroCardImageRemove = async (card: HeroCard) => {
-    // Delete from Cloudinary if publicId exists
     if (card.publicId) {
       try {
         await api.request('/api/admin/upload', {
@@ -263,12 +257,10 @@ export default function SettingsPage() {
       }
     }
 
-    // Update local state
     setHeroCards(prev => prev.map(c =>
       c.id === card.id ? { ...c, image: '', publicId: undefined } : c
     ))
 
-    // If card exists in database (not a new card), update it
     if (!card.id.startsWith('new-')) {
       try {
         await api.put(`/api/admin/hero-cards/${card.id}`, {
@@ -297,7 +289,6 @@ export default function SettingsPage() {
     }
   }
 
-  // Team Member Functions
   const handleTeamMemberChange = (id: string, field: keyof TeamMember, value: string | number) => {
     setTeamMembers(prev => prev.map(member =>
       member.id === id ? { ...member, [field]: value } : member
@@ -317,7 +308,6 @@ export default function SettingsPage() {
   }
 
   const handleTeamMemberImageRemove = async (member: TeamMember) => {
-    // Delete from Cloudinary if publicId exists
     if (member.publicId) {
       try {
         await api.request('/api/admin/upload', {
@@ -329,12 +319,10 @@ export default function SettingsPage() {
       }
     }
 
-    // Update local state
     setTeamMembers(prev => prev.map(m =>
       m.id === member.id ? { ...m, image: '', publicId: undefined } : m
     ))
 
-    // If member exists in database (not a new member), update it
     if (!member.id.startsWith('new-')) {
       try {
         await api.put(`/api/admin/team-members/${member.id}`, {
@@ -409,25 +397,20 @@ export default function SettingsPage() {
     }
   }
 
-  // Üyenin herhangi bir alanında veri var mı kontrol et
   const memberHasData = (member: TeamMember): boolean => {
     return !!(member.name || member.profession || member.phone || member.email || member.websiteUrl || member.image)
   }
 
-  // Silme butonuna tıklandığında
   const handleDeleteClick = (member: TeamMember) => {
-    // Eğer üyede herhangi bir veri varsa onay modal'ı göster
     if (memberHasData(member)) {
       setMemberToDelete(member)
       setShowDeleteModal(true)
     } else {
-      // Veri yoksa direkt sil
       handleDeleteTeamMember(member.id)
     }
   }
 
   const handleDeleteTeamMember = async (memberId: string) => {
-    // Yeni eklenen ama henüz kaydedilmemiş üyeyi direkt sil
     if (memberId.startsWith('new-')) {
       setTeamMembers(prev => prev.filter(m => m.id !== memberId))
       setShowDeleteModal(false)
@@ -568,7 +551,6 @@ export default function SettingsPage() {
           </div>
         )}
 
-        {/* Tabs */}
         <div className="bg-surface rounded-lg shadow mb-4 sm:mb-6">
           <div className="border-b border-border overflow-x-auto overflow-y-hidden">
             <nav className="flex -mb-px">
@@ -589,7 +571,6 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Ana Sayfa Ayarları */}
         {activeTab === 'home' && (
           <div className="bg-surface rounded-lg shadow p-4 sm:p-5 lg:p-6">
             <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-text-heading mb-4 sm:mb-6">Ana Sayfa Ayarları</h2>
@@ -660,7 +641,6 @@ export default function SettingsPage() {
           </div>
         )}
 
-        {/* Hakkımızda Ayarları */}
         {activeTab === 'about' && (
           <div className="bg-surface rounded-lg shadow p-4 sm:p-5 lg:p-6">
             <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-text-heading mb-4 sm:mb-6">Hakkımızda Ayarları</h2>
@@ -728,7 +708,6 @@ export default function SettingsPage() {
           </div>
         )}
 
-        {/* Projeler Ayarları */}
         {activeTab === 'projects' && (
           <div className="bg-surface rounded-lg shadow p-4 sm:p-5 lg:p-6">
             <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-text-heading mb-4 sm:mb-6">Projeler Sayfası Ayarları</h2>
@@ -756,7 +735,6 @@ export default function SettingsPage() {
           </div>
         )}
 
-        {/* Gayrimenkuller Ayarları */}
         {activeTab === 'properties' && (
           <div className="bg-surface rounded-lg shadow p-4 sm:p-5 lg:p-6">
             <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-text-heading mb-4 sm:mb-6">Gayrimenkuller Sayfası Ayarları</h2>
@@ -784,10 +762,8 @@ export default function SettingsPage() {
           </div>
         )}
 
-        {/* İletişim Ayarları */}
         {activeTab === 'contact' && (
           <div className="space-y-4 sm:space-y-6">
-            {/* Genel İletişim Ayarları */}
             <div className="bg-surface rounded-lg shadow p-4 sm:p-5 lg:p-6">
               <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-text-heading mb-4 sm:mb-6">İletişim Sayfası Ayarları</h2>
 
@@ -849,7 +825,6 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            {/* Ekip Üyeleri */}
             <div className="bg-surface rounded-lg shadow p-4 sm:p-5 lg:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
                 <div>
@@ -965,7 +940,6 @@ export default function SettingsPage() {
           </div>
         )}
 
-        {/* Hero Kartları */}
         {activeTab === 'heroCards' && (
           <div className="bg-surface rounded-lg shadow p-4 sm:p-5 lg:p-6">
             <div className="mb-4 sm:mb-6">
@@ -1026,7 +1000,6 @@ export default function SettingsPage() {
           </div>
         )}
 
-        {/* Footer Ayarları */}
         {activeTab === 'footer' && (
           <div className="bg-surface rounded-lg shadow p-4 sm:p-5 lg:p-6">
             <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-text-heading mb-4 sm:mb-6">Footer Ayarları</h2>
@@ -1056,13 +1029,9 @@ export default function SettingsPage() {
                 placeholder="info@aydinlarinsaat.com"
               />
 
-              <Input
-                label="Adres"
-                type="text"
-                value={settings.footer.address}
-                onChange={(value) => handleChange('footer', 'address', value)}
-                placeholder="Kocaeli, Türkiye"
-              />
+              <p className="text-xs text-text-tertiary bg-surface-hover p-3 rounded-lg">
+                <strong>Not:</strong> Footer'daki konum bilgisi, İletişim sekmesindeki haritada işaretlenen konumdan otomatik olarak alınır. Konum tıklandığında Google Maps'te ilgili koordinatlara yönlendirilir.
+              </p>
 
               <div className="flex justify-end pt-4 sm:pt-6 border-t">
                 <Button
@@ -1078,7 +1047,6 @@ export default function SettingsPage() {
           </div>
         )}
 
-      {/* Ekip Üyesi Silme Onay Modal'ı */}
       <ConfirmDialog
         isOpen={showDeleteModal}
         title="Ekip Üyesini Sil"

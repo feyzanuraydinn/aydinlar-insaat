@@ -5,14 +5,35 @@ import { siteConfig } from "@/data/site";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import ProjectDetailClient from "./ProjectDetailClient";
 
+export const dynamic = 'force-dynamic';
+
 interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-// Proje verilerini getir
+function serializeProject(project: any) {
+  if (!project) return null;
+
+  return {
+    ...project,
+    latitude: project.latitude ? Number(project.latitude) : null,
+    longitude: project.longitude ? Number(project.longitude) : null,
+    residentialDetails: project.residentialDetails ? {
+      ...project.residentialDetails,
+      price: project.residentialDetails.price ? Number(project.residentialDetails.price) : null,
+      grossArea: project.residentialDetails.grossArea ? Number(project.residentialDetails.grossArea) : null,
+      netArea: project.residentialDetails.netArea ? Number(project.residentialDetails.netArea) : null,
+    } : null,
+    commercialDetails: project.commercialDetails ? {
+      ...project.commercialDetails,
+      price: project.commercialDetails.price ? Number(project.commercialDetails.price) : null,
+      area: project.commercialDetails.area ? Number(project.commercialDetails.area) : null,
+    } : null,
+  };
+}
+
 async function getProject(id: string) {
   try {
-    // Önce slug ile dene
     let project = await prisma.project.findUnique({
       where: { slug: id },
       include: {
@@ -24,7 +45,6 @@ async function getProject(id: string) {
       },
     });
 
-    // Slug bulunamazsa ID ile dene
     if (!project) {
       project = await prisma.project.findUnique({
         where: { id },
@@ -38,14 +58,13 @@ async function getProject(id: string) {
       });
     }
 
-    return project;
+    return serializeProject(project);
   } catch (error) {
     console.error("Proje getirme hatası:", error);
     return null;
   }
 }
 
-// Dinamik metadata
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
   const project = await getProject(id);
@@ -59,7 +78,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const title = project.metaTitle || project.title;
   const description = project.metaDescription || project.description?.substring(0, 160) || `${project.title} - Aydınlar İnşaat projesi`;
-  const coverImage = project.images?.find((img) => img.isCover)?.url || project.images?.[0]?.url;
+  const coverImage = project.images?.find((img: { isCover?: boolean; url?: string }) => img.isCover)?.url || project.images?.[0]?.url;
 
   return {
     title,
@@ -103,23 +122,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-// Statik sayfalar için slug'ları oluştur
-export async function generateStaticParams() {
-  try {
-    const projects = await prisma.project.findMany({
-      select: { slug: true },
-    });
-
-    return projects.map((project) => ({
-      id: project.slug,
-    }));
-  } catch (error) {
-    console.error("generateStaticParams hatası:", error);
-    return [];
-  }
-}
-
-// Project JSON-LD
 function ProjectJsonLd({ project }: { project: any }) {
   const coverImage = project.images?.find((img: any) => img.isCover)?.url || project.images?.[0]?.url;
 
@@ -168,7 +170,6 @@ export default async function ProjectDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  // Breadcrumb verileri
   const breadcrumbItems = [
     { name: "Ana Sayfa", url: siteConfig.url },
     { name: "Projeler", url: `${siteConfig.url}/projects` },
@@ -177,11 +178,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
   return (
     <>
-      {/* JSON-LD Structured Data */}
       <ProjectJsonLd project={project} />
       <BreadcrumbJsonLd items={breadcrumbItems} />
-
-      {/* Client Component */}
       <ProjectDetailClient initialProject={project as any} />
     </>
   );

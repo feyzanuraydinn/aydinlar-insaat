@@ -44,12 +44,6 @@
   --color-badge-bg: #dbeafe;
   --color-badge-text: #1e40af;
 
-  --breakpoint-sm: 640px;
-  --breakpoint-md: 768px;
-  --breakpoint-lg: 1024px;
-  --breakpoint-xl: 1280px;
-  --breakpoint-2xl: 1536px;
-
   --container-padding: 1rem;
   --container-center: true;
 }
@@ -171,4 +165,38 @@
   100% {
     stroke-dashoffset: 200px;
   }
+}
+
+/* Scrollbar gizleme */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hero renkli scrollbar */
+.scrollbar-hero {
+  scrollbar-width: thin;
+  scrollbar-color: #23253d #e5e7eb;
+}
+
+.scrollbar-hero::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-hero::-webkit-scrollbar-track {
+  background: #e5e7eb;
+  border-radius: 3px;
+}
+
+.scrollbar-hero::-webkit-scrollbar-thumb {
+  background: #23253d;
+  border-radius: 3px;
+}
+
+.scrollbar-hero::-webkit-scrollbar-thumb:hover {
+  background: #2e3252;
 }

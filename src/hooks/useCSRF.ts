@@ -2,15 +2,11 @@
 
 import { useState, useEffect, useCallback } from 'react'
 
-/**
- * CSRF token yönetimi için hook
- */
 export function useCSRF() {
   const [csrfToken, setCsrfToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // CSRF token'ı al
   const fetchToken = useCallback(async () => {
     try {
       setLoading(true)
@@ -37,12 +33,10 @@ export function useCSRF() {
     }
   }, [])
 
-  // Token'ı yenile
   const refreshToken = useCallback(async () => {
     return fetchToken()
   }, [fetchToken])
 
-  // Component mount'ta token al
   useEffect(() => {
     fetchToken()
   }, [fetchToken])

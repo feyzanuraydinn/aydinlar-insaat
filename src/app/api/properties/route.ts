@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-// GET - List published properties (public)
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
@@ -35,7 +34,10 @@ export async function GET(req: NextRequest) {
       where,
       include: {
         images: {
-          orderBy: { order: 'asc' }
+          orderBy: [
+            { isCover: 'desc' },
+            { order: 'asc' }
+          ]
         },
         residentialDetails: true,
         commercialDetails: true,
@@ -44,7 +46,6 @@ export async function GET(req: NextRequest) {
       orderBy: featured === 'true'
         ? { featuredOrder: 'asc' }
         : [
-            // Öne çıkarılanları en üste getir (featuredOrder'a göre)
             { featured: 'desc' },
             { featuredOrder: 'asc' },
             { createdAt: 'desc' }

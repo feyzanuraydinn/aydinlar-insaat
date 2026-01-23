@@ -1,12 +1,3 @@
-/**
- * Property and Project Field Labels and Options
- * Bu dosya tüm emlak ve proje alanlarının Türkçe label'larını
- * ve seçenek çevirilerini içerir
- */
-
-// ============================================
-// GENEL ALAN LABELS
-// ============================================
 export const COMMON_LABELS = {
   title: 'Başlık',
   description: 'Açıklama',
@@ -16,9 +7,6 @@ export const COMMON_LABELS = {
   type: 'Tür',
 } as const;
 
-// ============================================
-// KONUT (RESIDENTIAL) ALAN LABELS
-// ============================================
 export const RESIDENTIAL_LABELS = {
   price: 'Fiyat',
   propertyType: 'Emlak Tipi',
@@ -44,9 +32,6 @@ export const RESIDENTIAL_LABELS = {
   exchange: 'Takaslı',
 } as const;
 
-// ============================================
-// TİCARİ (COMMERCIAL) ALAN LABELS
-// ============================================
 export const COMMERCIAL_LABELS = {
   price: 'Fiyat',
   propertyType: 'Emlak Tipi',
@@ -60,9 +45,6 @@ export const COMMERCIAL_LABELS = {
   exchange: 'Takaslı',
 } as const;
 
-// ============================================
-// ARSA (LAND) ALAN LABELS
-// ============================================
 export const LAND_LABELS = {
   propertyType: 'Emlak Tipi',
   zoningStatus: 'İmar Durumu',
@@ -79,11 +61,6 @@ export const LAND_LABELS = {
   exchange: 'Takaslı',
 } as const;
 
-// ============================================
-// SEÇENEK ÇEVİRİLERİ
-// ============================================
-
-// Emlak Tipi (Property Type)
 export const PROPERTY_TYPE_OPTIONS = {
   FOR_SALE: 'Satılık',
   FOR_RENT: 'Kiralık',
@@ -92,7 +69,6 @@ export const PROPERTY_TYPE_OPTIONS = {
   FOR_FLOOR_EQUIVALENT: 'Kat Karşılığı Satılık',
 } as const;
 
-// Oda Sayısı (Room Count)
 export const ROOM_COUNT_OPTIONS = {
   STUDIO: 'Stüdyo (1+0)',
   '1+1': '1+1',
@@ -119,7 +95,6 @@ export const ROOM_COUNT_OPTIONS = {
   '5+3': '5+3',
 } as const;
 
-// Konut Tipi (Housing Type)
 export const HOUSING_TYPE_OPTIONS = {
   DUPLEX: 'Dubleks',
   TOP_FLOOR: 'En Üst Kat',
@@ -132,7 +107,6 @@ export const HOUSING_TYPE_OPTIONS = {
   TRIPLEX: 'Tripleks',
 } as const;
 
-// Bina Yaşı (Building Age)
 export const BUILDING_AGE_OPTIONS = {
   '0_READY': '0 (Oturuma Hazır)',
   '0_CONSTRUCTION': '0 (Yapım Aşamasında)',
@@ -149,7 +123,6 @@ export const BUILDING_AGE_OPTIONS = {
   '31_PLUS': '31 ve üzeri',
 } as const;
 
-// Bulunduğu Kat (Current Floor)
 export const CURRENT_FLOOR_OPTIONS = {
   BASEMENT_4: 'Giriş Altı Kot 4',
   BASEMENT_3: 'Giriş Altı Kot 3',
@@ -195,7 +168,6 @@ export const CURRENT_FLOOR_OPTIONS = {
   '30_PLUS': '30 ve üzeri',
 } as const;
 
-// Kat Sayısı (Total Floors)
 export const TOTAL_FLOORS_OPTIONS = {
   '1': '1',
   '2': '2',
@@ -229,7 +201,6 @@ export const TOTAL_FLOORS_OPTIONS = {
   '30_PLUS': '30 ve üzeri',
 } as const;
 
-// Isıtma (Heating)
 export const HEATING_OPTIONS = {
   NONE: 'Yok',
   STOVE: 'Soba',
@@ -250,7 +221,6 @@ export const HEATING_OPTIONS = {
   HEAT_PUMP: 'Isı Pompası',
 } as const;
 
-// Banyo Sayısı (Bathroom Count)
 export const BATHROOM_COUNT_OPTIONS = {
   NONE: 'Yok',
   '1': '1',
@@ -262,25 +232,21 @@ export const BATHROOM_COUNT_OPTIONS = {
   '6_PLUS': '6 Üzeri',
 } as const;
 
-// Mutfak (Kitchen)
 export const KITCHEN_OPTIONS = {
   OPEN_AMERICAN: 'Açık (Amerikan)',
   CLOSED: 'Kapalı',
 } as const;
 
-// Balkon (Balcony)
 export const BALCONY_OPTIONS = {
   YES: 'Var',
   NO: 'Yok',
 } as const;
 
-// Asansör (Elevator)
 export const ELEVATOR_OPTIONS = {
   YES: 'Var',
   NO: 'Yok',
 } as const;
 
-// Otopark (Parking)
 export const PARKING_OPTIONS = {
   OPEN: 'Açık Otopark',
   CLOSED: 'Kapalı Otopark',
@@ -288,32 +254,27 @@ export const PARKING_OPTIONS = {
   NONE: 'Yok',
 } as const;
 
-// Eşyalı (Furnished)
 export const FURNISHED_OPTIONS = {
   YES: 'Evet',
   NO: 'Hayır',
 } as const;
 
-// Kullanım Durumu (Usage Status)
 export const USAGE_STATUS_OPTIONS = {
   EMPTY: 'Boş',
   TENANT: 'Kiracılı',
   OWNER: 'Mülk Sahibi',
 } as const;
 
-// Site İçerisinde (In Complex)
 export const IN_COMPLEX_OPTIONS = {
   YES: 'Evet',
   NO: 'Hayır',
 } as const;
 
-// Krediye Uygunluk (Mortgage Eligible)
 export const MORTGAGE_ELIGIBLE_OPTIONS = {
   YES: 'Evet',
   NO: 'Hayır',
 } as const;
 
-// Tapu Durumu (Deed Status)
 export const DEED_STATUS_OPTIONS = {
   CONDOMINIUM: 'Kat Mülkiyetli',
   EASEMENT: 'Kat İrtifaklı',
@@ -326,7 +287,6 @@ export const DEED_STATUS_OPTIONS = {
   NO_DEED: 'Tapu Kaydı Yok',
 } as const;
 
-// Kimden (Listed By)
 export const LISTED_BY_OPTIONS = {
   OWNER: 'Sahibinden',
   AGENCY: 'Emlak Ofisinden',
@@ -334,13 +294,11 @@ export const LISTED_BY_OPTIONS = {
   BANK: 'Bankadan',
 } as const;
 
-// Takaslı (Exchange)
 export const EXCHANGE_OPTIONS = {
   YES: 'Evet',
   NO: 'Hayır',
 } as const;
 
-// Ticari Tür (Commercial Type)
 export const COMMERCIAL_TYPE_OPTIONS = {
   SHOP: 'Dükkan & Mağaza',
   GAS_STATION: 'Akaryakıt İstasyonu',
@@ -377,7 +335,6 @@ export const COMMERCIAL_TYPE_OPTIONS = {
   DORMITORY: 'Yurt',
 } as const;
 
-// İmar Durumu (Zoning Status)
 export const ZONING_STATUS_OPTIONS = {
   ISLAND: 'Ada',
   A_LEGEND: 'A-Lejantlı',
@@ -404,9 +361,6 @@ export const ZONING_STATUS_OPTIONS = {
   OLIVE_GROVE: 'Zeytinlik',
 } as const;
 
-// ============================================
-// TÜR SEÇENEKLERİ (TYPE OPTIONS)
-// ============================================
 export const PROJECT_TYPE_OPTIONS = {
   RESIDENTIAL: 'Konut',
   COMMERCIAL: 'Ticari',
@@ -418,16 +372,6 @@ export const PROPERTY_TYPE_MAIN_OPTIONS = {
   LAND: 'Arsa',
 } as const;
 
-// ============================================
-// HELPER FUNCTIONS
-// ============================================
-
-/**
- * Bir enum değerini Türkçe'ye çevirir
- * @param value - Enum değeri (örn: "FOR_SALE")
- * @param optionsMap - Seçenekler haritası (örn: PROPERTY_TYPE_OPTIONS)
- * @returns Türkçe karşılık (örn: "Satılık") veya orijinal değer
- */
 export function translateOption<T extends Record<string, string>>(
   value: string | null | undefined,
   optionsMap: T
@@ -436,11 +380,6 @@ export function translateOption<T extends Record<string, string>>(
   return optionsMap[value as keyof T] || value;
 }
 
-/**
- * Bir model için tüm field'ları label'larıyla birlikte döndürür
- * @param type - Model tipi ("residential", "commercial", "land")
- * @returns Field adları ve label'ları
- */
 export function getFieldLabels(type: 'residential' | 'commercial' | 'land') {
   switch (type) {
     case 'residential':
@@ -454,9 +393,6 @@ export function getFieldLabels(type: 'residential' | 'commercial' | 'land') {
   }
 }
 
-/**
- * Tüm seçenekleri döndürür (dropdown'lar için)
- */
 export const ALL_OPTIONS = {
   propertyType: PROPERTY_TYPE_OPTIONS,
   roomCount: ROOM_COUNT_OPTIONS,

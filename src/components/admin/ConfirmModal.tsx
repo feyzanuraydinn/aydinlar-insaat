@@ -26,7 +26,6 @@ export default function ConfirmDialog({
   onCancel,
   isLoading = false,
 }: ConfirmDialogProps) {
-  // ESC tuşu ile kapatma
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen && !isLoading) {
@@ -37,7 +36,6 @@ export default function ConfirmDialog({
     return () => document.removeEventListener("keydown", handleEscape)
   }, [isOpen, isLoading, onCancel])
 
-  // Body scroll'u engelle
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden"
@@ -58,9 +56,7 @@ export default function ConfirmDialog({
         onClick={!isLoading ? onCancel : undefined}
       />
 
-      {/* Dialog */}
       <div className="relative w-full max-w-sm p-6 mx-4 bg-hero shadow-2xl rounded-xl">
-        {/* Warning Icon */}
         <div className="flex justify-center mb-4">
           <div className="flex items-center justify-center w-12 h-12 rounded-full bg-text-white/20">
             <svg
@@ -79,13 +75,11 @@ export default function ConfirmDialog({
           </div>
         </div>
 
-        {/* Content */}
         <div className="mb-6 text-center">
           <h3 className="mb-2 text-lg font-semibold text-text-white">{title}</h3>
           <p className="text-sm text-text-white-secondary">{message}</p>
         </div>
 
-        {/* Buttons */}
         <div className="flex gap-3">
           <Button
             variant="cancel"

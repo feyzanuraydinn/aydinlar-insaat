@@ -90,7 +90,7 @@ export const RATE_LIMITS = {
     windowMs: 15 * 60 * 1000,
   },
   UPLOAD: {
-    maxRequests: 100,
+    maxRequests: 500,
     windowMs: 60 * 60 * 1000,
   },
   API: {

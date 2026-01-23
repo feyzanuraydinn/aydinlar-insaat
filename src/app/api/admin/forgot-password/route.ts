@@ -14,24 +14,19 @@ export async function POST(request: Request) {
       )
     }
 
-    // Kullanıcıyı bul
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() }
     })
 
-    // Güvenlik için kullanıcı bulunamasa bile başarılı mesajı döndür
-    // Bu, e-posta adresinin sistemde kayıtlı olup olmadığının anlaşılmasını engeller
     if (!user) {
       return NextResponse.json({
         message: "Eğer bu e-posta adresi sistemde kayıtlıysa, şifre sıfırlama bağlantısı gönderilecektir."
       })
     }
 
-    // Şifre sıfırlama token'ı oluştur
     const resetToken = crypto.randomBytes(32).toString("hex")
-    const resetTokenExpiry = new Date(Date.now() + 600000) // 10 dakika geçerli
+    const resetTokenExpiry = new Date(Date.now() + 600000)
 
-    // Token'ı veritabanına kaydet
     await prisma.user.update({
       where: { id: user.id },
       data: {
@@ -42,7 +37,6 @@ export async function POST(request: Request) {
 
     const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/admin/reset-password?token=${resetToken}`
 
-    // E-posta gönder
     if (process.env.RESEND_API_KEY) {
       console.log("Sending email to:", user.email)
       const emailResult = await sendEmail({
@@ -55,16 +49,13 @@ export async function POST(request: Request) {
 
       if (!emailResult.success) {
         console.error("Email send failed:", emailResult.error)
-        // E-posta gönderilemese bile kullanıcıya hata gösterme (güvenlik)
       }
 
-      // Geliştirme için reset URL'i de yazdır
       console.log("=================================")
       console.log("ŞİFRE SIFIRLAMA BAĞLANTISI:")
       console.log(resetUrl)
       console.log("=================================")
     } else {
-      // Geliştirme ortamında console'a yazdır
       console.log("=================================")
       console.log("ŞİFRE SIFIRLAMA BAĞLANTISI:")
       console.log(resetUrl)

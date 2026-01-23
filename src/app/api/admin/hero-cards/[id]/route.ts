@@ -3,7 +3,6 @@ import { prisma } from '@/lib/prisma'
 import { requireAuth } from '@/lib/session'
 import { deleteFromCloudinary } from '@/lib/cloudinary'
 
-// GET - Tek bir hero card getir
 export async function GET(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -33,7 +32,6 @@ export async function GET(
   }
 }
 
-// PUT - Update hero card
 export async function PUT(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -43,7 +41,6 @@ export async function PUT(
     const { id } = await context.params
     const { image, publicId, title, description, order } = await req.json()
 
-    // Check if record exists
     const existingCard = await prisma.heroCard.findUnique({
       where: { id }
     })
@@ -55,7 +52,6 @@ export async function PUT(
       )
     }
 
-    // Delete old image from Cloudinary if image changed
     if (existingCard.publicId && existingCard.image !== image) {
       await deleteFromCloudinary(existingCard.publicId)
     }
@@ -81,7 +77,6 @@ export async function PUT(
   }
 }
 
-// DELETE - Delete hero card
 export async function DELETE(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -90,7 +85,6 @@ export async function DELETE(
     await requireAuth()
     const { id } = await context.params
 
-    // Get card first to get publicId
     const heroCard = await prisma.heroCard.findUnique({
       where: { id }
     })
@@ -102,7 +96,6 @@ export async function DELETE(
       )
     }
 
-    // Delete image from Cloudinary
     if (heroCard.publicId) {
       await deleteFromCloudinary(heroCard.publicId)
     }

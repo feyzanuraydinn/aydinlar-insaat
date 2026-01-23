@@ -8,7 +8,6 @@ import { loginSchema, formatZodErrors } from '@/lib/validations'
 
 export async function POST(req: NextRequest) {
   try {
-    // Rate limiting kontrolü
     const clientIP = getClientIP(req)
     const rateLimitKey = `login:${clientIP}`
     const rateLimit = checkRateLimit(rateLimitKey, RATE_LIMITS.LOGIN)
@@ -34,7 +33,6 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json()
 
-    // Zod validation
     const validation = loginSchema.safeParse(body)
     if (!validation.success) {
       return NextResponse.json(
@@ -53,7 +51,6 @@ export async function POST(req: NextRequest) {
     })
 
     if (!user) {
-      // Güvenlik: Kullanıcı var mı yok mu belli etme
       return NextResponse.json(
         { error: 'Hatalı e-posta veya şifre' },
         { status: 401 }
@@ -76,11 +73,10 @@ export async function POST(req: NextRequest) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7,
       path: '/',
     })
 
-    // Başarılı giriş - rate limit headers
     const response = NextResponse.json({
       success: true,
       user: {
