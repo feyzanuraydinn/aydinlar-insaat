@@ -315,7 +315,7 @@ Yerel ve global müşterilerine sürdürülebilir, güvenli ve uzun ömürlü ya
                     <div>
                       <p className="text-xs text-text-tertiary sm:text-sm">Bize Yazın</p>
                       <p className="text-xs font-semibold sm:text-sm text-hero-secondary">
-                        info@aydinlarinsaat.com
+                        aydinlar111@gmail.com
                       </p>
                     </div>
                   </div>

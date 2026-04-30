@@ -8,7 +8,7 @@ export const siteConfig = {
 
   contact: {
     phone: "+90-262-000-0000",
-    email: "info@aydinlarinsaat.com",
+    email: "aydinlar111@gmail.com",
     address: {
       street: "",
       city: "Kocaeli",

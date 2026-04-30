@@ -901,7 +901,7 @@ export default function SettingsPage() {
                           type="email"
                           value={member.email}
                           onChange={(value) => handleTeamMemberChange(member.id, 'email', value)}
-                          placeholder="ahmet@aydinlarinsaat.com"
+                          placeholder="ornek@gmail.com"
                           required
                         />
 
@@ -1026,7 +1026,7 @@ export default function SettingsPage() {
                 type="email"
                 value={settings.footer.email}
                 onChange={(value) => handleChange('footer', 'email', value)}
-                placeholder="info@aydinlarinsaat.com"
+                placeholder="aydinlar111@gmail.com"
               />
 
               <p className="text-xs text-text-tertiary bg-surface-hover p-3 rounded-lg">

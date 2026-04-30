@@ -55,7 +55,7 @@ export function LocalBusinessJsonLd() {
     image: "https://www.aydinlar-insaat.com/logo.png",
     url: "https://www.aydinlar-insaat.com",
     telephone: "+90-444-91-37",
-    email: "info@aydinlarinsaat.com",
+    email: "aydinlar111@gmail.com",
     address: {
       "@type": "PostalAddress",
       addressLocality: "Kocaeli",

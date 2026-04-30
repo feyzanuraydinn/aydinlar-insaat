@@ -67,7 +67,7 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={setEmail}
-              placeholder="admin@aydinlarinsaat.com"
+              placeholder="aydinlar111@gmail.com"
               required
               variant="dark"
             />
