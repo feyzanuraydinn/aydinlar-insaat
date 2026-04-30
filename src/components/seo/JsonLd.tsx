@@ -4,8 +4,8 @@ export function OrganizationJsonLd() {
     "@type": "Organization",
     name: "Aydınlar İnşaat",
     alternateName: "Aydınlar İnşaat A.Ş.",
-    url: "https://aydinlarinsaat.com",
-    logo: "https://aydinlarinsaat.com/logo.png",
+    url: "https://www.aydinlar-insaat.com",
+    logo: "https://www.aydinlar-insaat.com/logo.png",
     description: "30 yıllık tecrübesiyle konut projeleri, ticari yapılar ve endüstriyel tesislerde Türkiye'nin güvenilir inşaat firması.",
     foundingDate: "1994",
     numberOfEmployees: {
@@ -52,8 +52,8 @@ export function LocalBusinessJsonLd() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
     name: "Aydınlar İnşaat",
-    image: "https://aydinlarinsaat.com/logo.png",
-    url: "https://aydinlarinsaat.com",
+    image: "https://www.aydinlar-insaat.com/logo.png",
+    url: "https://www.aydinlar-insaat.com",
     telephone: "+90-444-91-37",
     email: "info@aydinlarinsaat.com",
     address: {
@@ -90,12 +90,12 @@ export function WebsiteJsonLd() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "Aydınlar İnşaat",
-    url: "https://aydinlarinsaat.com",
+    url: "https://www.aydinlar-insaat.com",
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: "https://aydinlarinsaat.com/projects?search={search_term_string}",
+        urlTemplate: "https://www.aydinlar-insaat.com/projects?search={search_term_string}",
       },
       "query-input": "required name=search_term_string",
     },

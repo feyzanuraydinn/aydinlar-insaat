@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: "Aydınlar İnşaat",
   legalName: "Aydınlar İnşaat A.Ş.",
-  url: "https://aydinlarinsaat.com",
+  url: "https://www.aydinlar-insaat.com",
   description: "Aydınlar İnşaat, 30 yıllık tecrübesiyle Kocaeli ve çevresinde konut projeleri, ticari yapılar, endüstriyel tesisler ve gayrimenkul hizmetleri sunan güvenilir inşaat firması.",
   shortDescription: "Kocaeli'nin güvenilir inşaat ve gayrimenkul firması",
   foundingDate: "1994",

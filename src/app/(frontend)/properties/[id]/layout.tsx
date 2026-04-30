@@ -86,7 +86,7 @@ export default async function PropertyDetailLayout({ children, params }: Props) 
   const { id } = await params
   const property = await getProperty(id)
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://aydinlarinsaat.com"
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.aydinlar-insaat.com"
 
   const landPrice = property?.landDetails?.pricePerSqm && property?.landDetails?.area
     ? Number(property.landDetails.pricePerSqm) * Number(property.landDetails.area)

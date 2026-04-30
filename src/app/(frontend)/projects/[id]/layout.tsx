@@ -77,7 +77,7 @@ export default async function ProjectDetailLayout({ children, params }: Props) {
   const { id } = await params
   const project = await getProject(id)
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://aydinlarinsaat.com"
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.aydinlar-insaat.com"
   const priceDecimal = project?.residentialDetails?.price || project?.commercialDetails?.price
   const price = priceDecimal ? Number(priceDecimal) : undefined
   const imageUrl = project?.images?.[0]?.url
