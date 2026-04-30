@@ -7,7 +7,7 @@ export const siteConfig = {
   foundingDate: "1994",
 
   contact: {
-    phone: "+90-262-000-0000",
+    phone: "0532 287 68 55",
     email: "aydinlar111@gmail.com",
     address: {
       street: "",
@@ -17,8 +17,8 @@ export const siteConfig = {
       country: "TR",
     },
     coordinates: {
-      latitude: 40.7650,
-      longitude: 29.9400,
+      latitude: 40.728140,
+      longitude: 29.988563,
     },
   },
 

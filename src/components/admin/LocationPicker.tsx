@@ -65,8 +65,8 @@ export default function LocationPicker({
   useEffect(() => {
     if (!isClient || !mapContainerRef.current || mapRef.current) return
 
-    const initialLat = latitude ?? 40.7650
-    const initialLng = longitude ?? 29.9400
+    const initialLat = latitude ?? 40.728140
+    const initialLng = longitude ?? 29.988563
     const initialZoom = (latitude && longitude) ? 17 : 10
 
     mapRef.current = L.map(mapContainerRef.current).setView([initialLat, initialLng], initialZoom)

@@ -298,7 +298,7 @@ Yerel ve global müşterilerine sürdürülebilir, güvenli ve uzun ömürlü ya
                     </div>
                     <div>
                       <p className="text-xs text-text-tertiary sm:text-sm">Bizi Arayın</p>
-                      <p className="text-sm font-semibold sm:text-base text-hero-secondary">444 91 37</p>
+                      <p className="text-sm font-semibold sm:text-base text-hero-secondary">0532 287 68 55</p>
                     </div>
                   </div>
 

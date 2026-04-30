@@ -15,7 +15,7 @@ interface FooterProps {
 
 export default function Footer({ settings }: FooterProps) {
   const description = settings?.description || "Kaliteli inşaat hizmetleri ve güvenilir gayrimenkul çözümleri.";
-  const phone = settings?.phone || "444 91 37";
+  const phone = settings?.phone || "0532 287 68 55";
   const email = settings?.email || "aydinlar111@gmail.com";
   const latitude = settings?.latitude;
   const longitude = settings?.longitude;

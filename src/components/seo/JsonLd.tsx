@@ -21,7 +21,7 @@ export function OrganizationJsonLd() {
     },
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+90-444-91-37",
+      telephone: "+90 532 287 68 55",
       contactType: "customer service",
       availableLanguage: "Turkish",
     },
@@ -54,7 +54,7 @@ export function LocalBusinessJsonLd() {
     name: "Aydınlar İnşaat",
     image: "https://www.aydinlar-insaat.com/logo.png",
     url: "https://www.aydinlar-insaat.com",
-    telephone: "+90-444-91-37",
+    telephone: "+90 532 287 68 55",
     email: "aydinlar111@gmail.com",
     address: {
       "@type": "PostalAddress",
@@ -65,8 +65,8 @@ export function LocalBusinessJsonLd() {
     },
     geo: {
       "@type": "GeoCoordinates",
-      latitude: 40.7650,
-      longitude: 29.9400,
+      latitude: 40.728140,
+      longitude: 29.988563,
     },
     openingHoursSpecification: {
       "@type": "OpeningHoursSpecification",

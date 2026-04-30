@@ -1018,7 +1018,7 @@ export default function SettingsPage() {
                 type="tel"
                 value={settings.footer.phone}
                 onChange={(value) => handleChange('footer', 'phone', value)}
-                placeholder="444 91 37"
+                placeholder="0532 287 68 55"
               />
 
               <Input
