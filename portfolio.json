@@ -1,0 +1,72 @@
+{
+  "id": "aydinlar-insaat",
+  "slug": "aydinlar-insaat",
+  "preview": "aydinlar-insaat.webp",
+  "technologies": ["Next.js", "TypeScript", "Prisma", "PostgreSQL", "Tailwind CSS"],
+  "liveUrl": "https://www.aydinlar-insaat.com",
+  "isMobile": false,
+  "content": {
+    "name": {
+      "tr": "Aydınlar İnşaat",
+      "en": "Aydınlar İnşaat"
+    },
+    "subtitle": {
+      "tr": "İnşaat ve Gayrimenkul Kurumsal Web Sitesi",
+      "en": "Corporate Website for Construction & Real Estate"
+    },
+    "cardDescription": {
+      "tr": "İnşaat ve gayrimenkul şirketi Aydınlar İnşaat için kurumsal web sitesi. Tamamlanan ve devam eden projeler, hizmetler ve iletişim modülleriyle Next.js 15, Prisma 7 ve Tailwind CSS üzerine kurulu.",
+      "en": "Corporate website for Aydınlar İnşaat, a construction and real estate company. Showcases completed and ongoing projects, services, and contact channels — built with Next.js 15, Prisma 7 and Tailwind CSS."
+    },
+    "description": {
+      "tr": "İnşaat ve gayrimenkul şirketi Aydınlar İnşaat için tasarlanmış kurumsal web sitesi. Tamamlanan ve devam eden projeleri sergileyen galeri, hizmetler bölümü ve iletişim formu içerir. Next.js 15, Prisma 7 ve Tailwind CSS ile geliştirildi; PostgreSQL üzerinde Prisma ORM ile veritabanı yönetimi sağlandı.",
+      "en": "Corporate website built for Aydınlar İnşaat, a construction and real estate company. Includes a project gallery for completed and ongoing builds, services overview, and contact form. Built with Next.js 15, Prisma 7 and Tailwind CSS, backed by PostgreSQL with type-safe Prisma ORM data layer."
+    },
+    "cardAlt": {
+      "tr": "Aydınlar İnşaat kurumsal web sitesi ekran görüntüsü",
+      "en": "Aydınlar İnşaat corporate website screenshot"
+    },
+    "heroAlt": {
+      "tr": "Aydınlar İnşaat web sitesi hero görseli",
+      "en": "Aydınlar İnşaat website hero image"
+    },
+    "status": {
+      "tr": "Yayında",
+      "en": "Released"
+    },
+    "roles": [
+      {
+        "icon": "code",
+        "title": { "tr": "Full Stack Geliştirme", "en": "Full Stack Development" },
+        "desc": {
+          "tr": "Next.js 15 App Router ve TypeScript ile baştan sona kurumsal site geliştirildi",
+          "en": "Built the corporate site end-to-end with Next.js 15 App Router and TypeScript"
+        }
+      },
+      {
+        "icon": "database",
+        "title": { "tr": "Veritabanı & ORM", "en": "Database & ORM" },
+        "desc": {
+          "tr": "PostgreSQL şeması tasarlanarak Prisma 7 ile type-safe ORM katmanı kuruldu",
+          "en": "Designed the PostgreSQL schema and set up a type-safe ORM layer with Prisma 7"
+        }
+      },
+      {
+        "icon": "box",
+        "title": { "tr": "İçerik Yönetimi", "en": "Content Modeling" },
+        "desc": {
+          "tr": "Projeler, hizmetler ve referanslar için dinamik içerik modelleri kurgulandı",
+          "en": "Modelled dynamic content for projects, services and references with rich relations"
+        }
+      },
+      {
+        "icon": "users",
+        "title": { "tr": "İletişim & SEO", "en": "Contact & SEO" },
+        "desc": {
+          "tr": "İletişim formu, structured data ve performans odaklı SEO stratejisi uygulandı",
+          "en": "Implemented the contact form, structured data, and a performance-focused SEO strategy"
+        }
+      }
+    ]
+  }
+}
