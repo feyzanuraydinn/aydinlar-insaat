@@ -5,6 +5,7 @@
   "technologies": ["Next.js", "TypeScript", "Prisma", "PostgreSQL", "Tailwind CSS"],
   "liveUrl": "https://www.aydinlar-insaat.com",
   "isMobile": false,
+  "featured": true,
   "content": {
     "name": {
       "tr": "Aydınlar İnşaat",
