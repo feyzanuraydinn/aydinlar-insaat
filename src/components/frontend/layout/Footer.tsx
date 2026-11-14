@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { NavLink } from "@/components/frontend/layout/NavLink";
 
 interface FooterSettings {
   description?: string;
@@ -33,13 +33,13 @@ export default function Footer({ settings }: FooterProps) {
       <div className="w-full max-w-screen-xl px-4 py-6 mx-auto sm:px-6 lg:px-8 lg:py-10">
         <div className="grid grid-cols-2 gap-6 sm:gap-8 lg:grid-cols-3">
           <div className="col-span-2 lg:col-span-1">
-            <Link href="/" className="flex items-center">
+            <NavLink href="/" className="flex items-center">
               <img
                 src="/logo.svg"
                 alt="Aydınlar İnşaat"
                 className="w-auto h-10 brightness-0 invert"
               />
-            </Link>
+            </NavLink>
             <p className="max-w-sm mt-3 text-sm text-text-white sm:text-base">
               {description}
             </p>
@@ -51,24 +51,24 @@ export default function Footer({ settings }: FooterProps) {
             </h2>
             <ul className="space-y-2 text-xs font-medium text-text-white sm:text-sm md:text-base">
               <li>
-                <Link href="/about" className="transition-colors hover:text-primary-light">
+                <NavLink href="/about" className="transition-colors hover:text-primary-light">
                   Hakkımızda
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link href="/projects" className="transition-colors hover:text-primary-light">
+                <NavLink href="/projects" className="transition-colors hover:text-primary-light">
                   Projelerimiz
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link href="/properties" className="transition-colors hover:text-primary-light">
+                <NavLink href="/properties" className="transition-colors hover:text-primary-light">
                   Gayrimenkul
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link href="/contact" className="transition-colors hover:text-primary-light">
+                <NavLink href="/contact" className="transition-colors hover:text-primary-light">
                   İletişim
-                </Link>
+                </NavLink>
               </li>
             </ul>
           </div>
@@ -124,9 +124,9 @@ export default function Footer({ settings }: FooterProps) {
         <div className="text-center">
           <span className="text-xs text-text-white sm:text-sm">
             © {currentYear}{" "}
-            <Link href="/" className="transition-colors hover:text-primary-light">
+            <NavLink href="/" className="transition-colors hover:text-primary-light">
               Aydınlar İnşaat™
-            </Link>
+            </NavLink>
             . Tüm hakları saklıdır.
           </span>
         </div>

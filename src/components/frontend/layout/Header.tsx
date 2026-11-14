@@ -1,14 +1,16 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { NavLink } from '@/components/frontend/layout/NavLink';
+import { useScrollToTopOnPathChange } from '@/hooks/useScrollToTopOnPathChange';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
   const navRef = useRef<HTMLUListElement>(null);
   const pathname = usePathname();
+  useScrollToTopOnPathChange(pathname);
 
   const isActive = (path: string) => {
     if (path === '/') return pathname === '/';
@@ -49,13 +51,13 @@ export default function Header() {
   return (
     <nav className="fixed top-0 z-50 w-full bg-surface start-0">
       <div className="flex flex-wrap items-center justify-between max-w-screen-xl p-4 mx-auto">
-        <Link href="/" className="flex items-center">
+        <NavLink href="/" className="flex items-center">
           <img
             src="/logo.svg"
             alt="Aydınlar İnşaat"
             className="h-10 sm:h-12 md:h-14 w-auto"
           />
-        </Link>
+        </NavLink>
 
         <button
           data-collapse-toggle="navbar-default"
@@ -108,7 +110,7 @@ export default function Header() {
 
             {navItems.map((item) => (
               <li key={item.href}>
-                <Link
+                <NavLink
                   href={item.href}
                   data-active={isActive(item.href)}
                   className={`block px-4 py-3 md:px-5 md:py-4 rounded-lg md:rounded-none transition-all duration-300 ${
@@ -120,7 +122,7 @@ export default function Header() {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.label}
-                </Link>
+                </NavLink>
               </li>
             ))}
           </ul>
